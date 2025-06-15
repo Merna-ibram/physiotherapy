@@ -5,6 +5,7 @@ class Registration(models.Model):
     _inherit = 'res.partner'
     _description = 'registration'
 
+    is_patient = fields.Boolean(string="Is a Patient")
     code = fields.Char(default='new', readonly=1, string="Code")
     age = fields.Integer(required=True, string="Age")
     gender = fields.Selection([('m', 'Male'), ('f', 'Female')], string="Gender",required=True)
