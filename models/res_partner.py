@@ -9,6 +9,8 @@ class Registration(models.Model):
     code = fields.Char(default='new', readonly=1, string="Code")
     age = fields.Integer(required=True, string="Age")
     gender = fields.Selection([('m', 'Male'), ('f', 'Female')], string="Gender",required=True)
+    
+    sales_person = fields.Many2one('res.users', string='الاخصائي')
 
     diagnosis = fields.Text(required=True,  string="Diagnosis")
 
