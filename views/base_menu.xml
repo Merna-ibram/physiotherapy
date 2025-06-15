@@ -13,5 +13,10 @@
         parent="physiotherapy_root_menu"
     />
 
+    <menuitem
+            id="menu_my_cases_root"
+              name="My Cases"
+    />
+
 
 </odoo>
