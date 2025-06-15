@@ -1,0 +1,152 @@
+<odoo>
+    <!-- Tree View -->
+    <record id="registration_view_tree" model="ir.ui.view">
+        <field name="name">registration.tree</field>
+        <field name="model">registration</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="partner_id"/>
+                <field name="code"/>
+                <field name="phone"/>
+                <field name="age"/>
+                <field name="gender"/>
+                <field name="date"/>
+                 <field name="months"/>
+                <field name="end_date"/>
+                <field name="diagnosis"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Form View -->
+    <record id="registration_view_form" model="ir.ui.view">
+        <field name="name">registration.form</field>
+        <field name="model">registration</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <div class="oe_title">
+                        <label for="code"/>
+                        <h1>
+                            <field name="code"/>
+                        </h1>
+                        <label for="partner_id"/>
+                        <h3>
+                            <field name="partner_id"/>
+                        </h3>
+                    </div>
+                    <group string="General Info">
+                        <field name="phone"/>
+                        <field name="age"/>
+                        <field name="gender"/>
+                        <field name="date"/>
+                        <field name="months"/>
+                        <field name="end_date"/>
+                        <field name="diagnosis"/>
+                    </group>
+                    <group string="Past History">
+                        <field name="rta"/>
+                        <field name="sport_injury"/>
+                        <field name="electrical_shock"/>
+                        <field name="burn"/>
+                        <field name="lifting_heavy_object"/>
+                        <field name="no_history_of_trauma"/>
+                        <field name="duration"/>
+                    </group>
+                    <group string="Medical History">
+                        <field name="htn"/>
+                        <field name="dm"/>
+                        <field name="osteoporosis"/>
+                        <field name="cardiac_problems"/>
+                        <field name="other_medical"/>
+                        <field name="surgical_history"/>
+                    </group>
+                     <group string="Chief Complaint">
+                         <field name="pain"/>
+                         <field name="stiffness"/>
+                         <field name="weakness"/>
+                         <field name="neuro_deficit"/>
+                         <field name="other_chief"/>
+                     </group>
+                    <group string="Pain Description">
+                        <field name="onset"/>
+                        <field name="pain_localized"/>
+                        <field name="pain_radiated"/>
+                        <field name="pain_constant"/>
+                        <field name="pain_intermittent"/>
+                        <field name="aggravated_by"/>
+                        <field name="relieved_by"/>
+                    </group>
+                    <group string="Physical Condition">
+                        <field name="patient_wheelchair"/>
+                        <field name="patient_assistive"/>
+                        <field name="patient_carried"/>
+                        <field name="patient_on_bed"/>
+                        <field name="patient_normal"/>
+                        <field name="gait_other"/>
+                    </group>
+                    <group string="Consciousness">
+                        <field name="oriented"/>
+                        <field name="confused"/>
+                        <field name="vegetated"/>
+                        <field name="conscious_other"/>
+                    </group>
+                    <group string="Fall Risk">
+                        <field name="risk_time"/>
+                        <field name="risk_level"/>
+                    </group>
+                    <group string="Session">
+                        <field name="session"/>
+                        <field name="lazer"/>
+                        <field name="shock_wave"/>
+                        <field name="traction"/>
+                    </group>
+                    <group string="Symptoms">
+                        <field name="edema"/>
+                        <field name="swelling"/>
+                        <field name="redness"/>
+                        <field name="hotness"/>
+                        <field name="muscle_weakness"/>
+                        <field name="muscle_spasm"/>
+                        <field name="muscle_atrophy"/>
+                        <field name="deformity"/>
+                    </group>
+                    <group string="Examinations">
+                        <field name="neuro_exam"/>
+                        <field name="active_rom"/>
+                        <field name="passive_rom"/>
+                        <field name="muscle_test"/>
+                        <field name="special_test"/>
+                    </group>
+                </sheet>
+<!--                <div class="oe_chatter">-->
+<!--                    <field name="message_follower_ids"/>-->
+<!--                    <field name="activity_ids"/>-->
+<!--                    <field name="message_ids"/>-->
+<!--                </div>-->
+            </form>
+        </field>
+    </record>
+
+    <!-- Search View -->
+    <record id="registration_view_search" model="ir.ui.view">
+        <field name="name">registration.search</field>
+        <field name="model">registration</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="phone"/>
+            </search>
+        </field>
+    </record>
+
+    <!-- Action -->
+    <record id="registration_action" model="ir.actions.act_window">
+        <field name="name">Registrations</field>
+        <field name="res_model">registration</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <!-- Menu Items -->
+    <menuitem id="physiotherapy_menu_item" name="Registrations" parent="physiotherapy_menu" action="registration_action"/>
+</odoo>

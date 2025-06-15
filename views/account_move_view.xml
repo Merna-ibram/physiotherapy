@@ -1,0 +1,40 @@
+<odoo>
+    <data>
+
+        <record id="view_account_form_inherit_medical" model="ir.ui.view">
+            <field name="name">account.move.form.medical.inherit</field>
+            <field name="model">account.move</field>
+            <field name="inherit_id" ref="account.view_move_form"/>
+            <field name="arch" type="xml">
+
+               <xpath expr="//div[.//field[@name='partner_id']]" position="inside">
+                   <group string="Patient Info">
+                       <field name="code"/>
+                       <field name="age"/>
+                       <field name="gender"/>
+                   </group>
+               </xpath>
+                <xpath expr="//group[@id='header_right_group']" position="replace">
+                    <group id="header_right_group">
+                        <separator string="Subscription Info"/>
+                        <field name="start_date"/>
+                        <field name="months"/>
+                        <field name="end_date"/>
+                    </group>
+                </xpath>
+            </field>
+        </record>
+        <record id="ir_cron_create_subscription_invoices" model="ir.cron">
+            <field name="name">Create Subscription Invoices</field>
+            <field name="model_id" ref="account.model_account_move"/>
+            <field name="state">code</field>
+            <field name="code">model.create_subscription_invoices()</field>
+            <field name="interval_number">1</field>
+            <field name="interval_type">days</field>
+            <field name="numbercall">-1</field>
+            <field name="active">True</field>
+            <field name="user_id" ref="base.user_admin"/>
+        </record>
+
+    </data>
+</odoo>

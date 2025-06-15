@@ -1,0 +1,156 @@
+<odoo>
+    <data>
+
+        <!-- Inherited Form View -->
+        <record id="view_partner_form_inherit_medical" model="ir.ui.view">
+            <field name="name">res.partner.form.medical.inherit</field>
+            <field name="model">res.partner</field>
+            <field name="inherit_id" ref="base.view_partner_form"/>
+            <field name="arch" type="xml">
+
+
+                <field name="vat" position="after">
+                    <separator string="person info"/>
+                    <group>
+                        <field name="code"/>
+                        <field name="age"/>
+                        <field name="gender"/>
+                    </group>
+
+                    <separator string="Diagnosis"/>
+                    <group>
+                        <field name="diagnosis"/>
+                    </group>
+
+                    <separator string="Medical History"/>
+                    <group>
+                        <field name="htn"/>
+                        <field name="dm"/>
+                        <field name="osteoporosis"/>
+                        <field name="cardiac_problems"/>
+                        <field name="other_medical"/>
+                        <field name="surgical_history"/>
+                    </group>
+
+                    <separator string="Past History"/>
+                    <group>
+                        <field name="rta"/>
+                        <field name="sport_injury"/>
+                        <field name="electrical_shock"/>
+                        <field name="burn"/>
+                        <field name="lifting_heavy_object"/>
+                        <field name="no_history_of_trauma"/>
+                        <field name="duration"/>
+                    </group>
+
+                    <separator string="Complaints and Pain"/>
+                    <group>
+                        <field name="pain"/>
+                        <field name="stiffness"/>
+                        <field name="weakness"/>
+                        <field name="neuro_deficit"/>
+                        <field name="other_chief"/>
+                    </group>
+
+                    <separator string="Pain Description"/>
+                    <group>
+                        <field name="onset"/>
+                        <field name="pain_localized"/>
+                        <field name="pain_radiated"/>
+                        <field name="pain_constant"/>
+                        <field name="pain_intermittent"/>
+                        <field name="aggravated_by"/>
+                        <field name="relieved_by"/>
+                    </group>
+
+                    <separator string="Patient Condition"/>
+                    <group string="Arrival Condition">
+                        <field name="patient_wheelchair"/>
+                        <field name="patient_assistive"/>
+                        <field name="patient_carried"/>
+                        <field name="patient_on_bed"/>
+                        <field name="patient_normal"/>
+                        <field name="gait_other"/>
+                    </group>
+
+                    <group string="Consciousness">
+                        <field name="oriented"/>
+                        <field name="confused"/>
+                        <field name="vegetated"/>
+                        <field name="conscious_other"/>
+                    </group>
+
+                    <group string="Risk of Falls">
+                        <field name="risk_time"/>
+                        <field name="risk_level"/>
+                    </group>
+
+                    <separator string="Symptoms and Sessions"/>
+                    <group string="Symptoms">
+                        <field name="edema"/>
+                        <field name="swelling"/>
+                        <field name="redness"/>
+                        <field name="hotness"/>
+                        <field name="muscle_weakness"/>
+                        <field name="muscle_spasm"/>
+                        <field name="muscle_atrophy"/>
+                        <field name="deformity"/>
+                    </group>
+
+                    <group string="Session Details">
+                        <field name="session"/>
+                        <field name="lazer"/>
+                        <field name="shock_wave"/>
+                        <field name="traction"/>
+                    </group>
+
+                    <separator string="Examination"/>
+                    <group>
+                        <field name="neuro_exam"/>
+                        <field name="active_rom"/>
+                        <field name="passive_rom"/>
+                        <field name="muscle_test"/>
+                        <field name="special_test"/>
+                    </group>
+                </field>
+
+                <xpath expr="//field[@name='category_id']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+                <xpath expr="//field[@name='function']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+                <xpath expr="//field[@name='email']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+                <xpath expr="//field[@name='website']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+                <xpath expr="//field[@name='title']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+                <xpath expr="//field[@name='vat']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+                <xpath expr="//field[@name='phone']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+                <xpath expr="//field[@name='lang']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+                <xpath expr="//page[@name='contact_addresses']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+                <xpath expr="//page[@name='internal_notes']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+                <xpath expr="//page[@name='sales_purchases']//field[@name='user_id']" position="attributes">
+                    <attribute name="string">الأخصائي</attribute>
+                </xpath>
+            </field>
+        </record>
+
+
+
+    </data>
+</odoo>
