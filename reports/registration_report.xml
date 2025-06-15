@@ -64,6 +64,9 @@
                 <td><span t-field="doc.end_date"/></td>
               </tr>
 
+              <tr><th colspan="8" class="section-header">الاخصائي</th></tr>
+              <tr><td colspan="8"><p t-field="doc.sales_person"/></td></tr>
+
               <tr><th colspan="8" class="section-header">Diagnosis</th></tr>
               <tr><td colspan="8"><p t-field="doc.diagnosis"/></td></tr>
 
