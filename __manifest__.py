@@ -29,9 +29,6 @@
         'views/my_cases_views.xml',
         'views/my_cases_views.xml',
 
-
-
-
         # Wizards
 
 

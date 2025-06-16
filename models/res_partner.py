@@ -3,16 +3,17 @@ from odoo.exceptions import ValidationError
 
 class Registration(models.Model):
     _inherit = 'res.partner'
-    _description = 'registration'
+    _description = 'Registration'
 
     is_patient = fields.Boolean(string="Is a Patient")
     code = fields.Char(default='new', readonly=1, string="Code")
     age = fields.Integer(required=True, string="Age")
     gender = fields.Selection([('m', 'Male'), ('f', 'Female')], string="Gender",required=True)
-    
+
     sales_person = fields.Many2one('res.users', string='الاخصائي')
 
-    diagnosis = fields.Text(string="Diagnosis")
+
+    diagnosis = fields.Char(string="Diagnosis", tracking=True)
 
     # Past History
     rta = fields.Boolean(string="RTA")
@@ -44,8 +45,8 @@ class Registration(models.Model):
     pain_radiated = fields.Boolean(string="Radiated")
     pain_constant = fields.Boolean(string="Constant")
     pain_intermittent = fields.Boolean(string="Intermittent")
-    aggravated_by = fields.Text(string="Aggravated By")
-    relieved_by = fields.Text(string="Relieved By")
+    aggravated_by = fields.Text(string="Aggravated By", tracking=True)
+    relieved_by = fields.Text(string="Relieved By", tracking=True)
 
     # Patient condition on arrival
     patient_wheelchair = fields.Boolean(string="Wheelchair")
@@ -96,6 +97,7 @@ class Registration(models.Model):
 
 
 
+
     @api.constrains('age')
     def _check_age_greater_zero(self):
         for rec in self:
@@ -117,5 +119,18 @@ class Registration(models.Model):
 
         return res
 
+    # @api.multi
+    # def write(self, vals):
+    #     res = super(Registration, self).write(vals)
+    #     if 'sales_person' in vals:
+    #         for partner in self:
+    #             cases = self.env['my.cases'].search([('patient_id', '=', partner.id)])
+    #             cases.write({'sales_person': vals['sales_person']})
+    #     return res
 
-
+    # @api.constrains('is_patient', 'diagnosis')
+    # def _check_diagnosis_required(self):
+    #     for rec in self:
+    #         if rec.is_patient and not rec.diagnosis:
+    #             raise ValidationError("Diagnosis is required for patients.")
+    #
