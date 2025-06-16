@@ -11,6 +11,7 @@ class Registration(models.Model):
     gender = fields.Selection([('m', 'Male'), ('f', 'Female')], string="Gender",required=True)
 
     sales_person = fields.Many2one('res.users', string='الاخصائي')
+    doctor = fields.Many2one('hr.employee', string='الاخصائي')
 
 
     diagnosis = fields.Char(string="Diagnosis", tracking=True)
@@ -104,20 +105,15 @@ class Registration(models.Model):
             if rec.age == 0:
                 raise ValidationError('Please enter a valid age greater than 0')
 
-    _sql_constraints = [
-        ('unique_name', 'unique("name")', 'This name already exists! Please try another one.')
-    ]
+    # _sql_constraints = [
+    #     ('unique_name', 'unique("name")', 'This name already exists! Please try another one.')
+    # ]
 
     @api.model
     def create(self, vals):
-        res = super(Registration, self).create(vals)
-        if res.code == 'new':
-            sequence = self.env['ir.sequence'].next_by_code('registration_seq')
-            if sequence:
-                # Update the record with the generated sequence
-                res.code = sequence
-
-        return res
+        if vals.get('code', 'new') == 'new':
+            vals['code'] = self.env['ir.sequence'].next_by_code('registration_seq') or '/'
+        return super(Registration, self).create(vals)
 
     # @api.multi
     # def write(self, vals):

@@ -11,6 +11,7 @@
         'base',
         'account',
         'mail',
+        'hr',
     ],
 
     'data': [
@@ -28,6 +29,7 @@
         'views/account_move_view.xml',
         'views/my_cases_views.xml',
         'views/my_cases_views.xml',
+        'views/hr_employee_view.xml',
 
         # Wizards
 

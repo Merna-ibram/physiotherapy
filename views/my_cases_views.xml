@@ -8,7 +8,7 @@
                     <group>
 <!--                        <field name="name"/>-->
                         <field name="patient_id"/>
-                        <field name="sales_person"/>
+                        <field name="doctor"/>
                     </group>
                 </sheet>
             </form>
@@ -22,7 +22,7 @@
             <tree>
 <!--                <field name="name"/>-->
                 <field name="patient_id"/>
-                <field name="sales_person"/>
+                <field name="doctor"/>
             </tree>
         </field>
     </record>
@@ -31,8 +31,8 @@
         <field name="name">Cases</field>
         <field name="res_model">my.cases</field>
         <field name="view_mode">tree,form</field>
-        <field name="domain">[('sales_person', '=', uid)]</field>
     </record>
+
 
 
     <menuitem id="menu_my_cases" name="Cases" parent="menu_my_cases_root" action="action_my_cases"/>

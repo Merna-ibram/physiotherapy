@@ -26,7 +26,7 @@
 
                         <separator string="Patient Info"/>
                         <group col="4" colspan="4">
-                            <field name="sales_person"/>
+                            <field name="doctor"/>
                         </group>
 
                         <separator string="Diagnosis"/>
@@ -163,7 +163,7 @@
                     <attribute name="invisible">1</attribute>
                 </xpath>
                 <xpath expr="//page[@name='sales_purchases']//field[@name='user_id']" position="attributes">
-                    <attribute name="string">الأخصائي</attribute>
+                    <attribute name="invisible">1</attribute>
                 </xpath>
 
             </field>
