@@ -12,7 +12,7 @@ class Registration(models.Model):
     
     sales_person = fields.Many2one('res.users', string='الاخصائي')
 
-    diagnosis = fields.Text(required=True,  string="Diagnosis")
+    diagnosis = fields.Text(string="Diagnosis")
 
     # Past History
     rta = fields.Boolean(string="RTA")
