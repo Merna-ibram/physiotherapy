@@ -6,6 +6,8 @@
     'version': '0.1',
     'license': 'LGPL-3',
     'application': True,
+    'installable': True,
+
 
     'depends': [
         'base',
@@ -27,7 +29,6 @@
         'views/base_menu.xml',
         'views/res_partner_view.xml',
         'views/account_move_view.xml',
-        'views/my_cases_views.xml',
         'views/my_cases_views.xml',
         'views/hr_employee_view.xml',
 

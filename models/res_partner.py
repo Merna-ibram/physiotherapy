@@ -1,6 +1,7 @@
 from odoo import models, fields, api
 from odoo.exceptions import ValidationError
 
+
 class Registration(models.Model):
     _inherit = 'res.partner'
     _description = 'Registration'
@@ -10,9 +11,9 @@ class Registration(models.Model):
     age = fields.Integer(required=True, string="Age")
     gender = fields.Selection([('m', 'Male'), ('f', 'Female')], string="Gender",required=True)
 
-    sales_person = fields.Many2one('res.users', string='الاخصائي')
     doctor = fields.Many2one('hr.employee', string='الاخصائي')
 
+    sales_person = fields.Many2one('res.users', string='الاخصائي')
 
     diagnosis = fields.Char(string="Diagnosis", tracking=True)
 
@@ -109,11 +110,24 @@ class Registration(models.Model):
     #     ('unique_name', 'unique("name")', 'This name already exists! Please try another one.')
     # ]
 
+
     @api.model
     def create(self, vals):
-        if vals.get('code', 'new') == 'new':
-            vals['code'] = self.env['ir.sequence'].next_by_code('registration_seq') or '/'
-        return super(Registration, self).create(vals)
+        res = super(Registration, self).create(vals)
+
+        # Generate patient code
+        if res.code == 'new':
+            sequence = self.env['ir.sequence'].next_by_code('registration_seq')
+            if sequence:
+                res.code = sequence
+
+        # Create my.cases record automatically
+        if vals.get('is_patient'):
+            self.env['my.cases'].create({
+                'patient_id': res.id,
+            })
+
+        return res
 
     # @api.multi
     # def write(self, vals):
