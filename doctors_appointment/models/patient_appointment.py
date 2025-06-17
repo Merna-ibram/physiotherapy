@@ -3,8 +3,9 @@ class PatientAppointment(models.Model):
     _name = "patient.appointment"
     _description = "Patient Records"
 
+
     patient_id = fields.Many2one('res.partner', string="Patient")
-    doctors_id = fields.Many2one('hr.employee', string="الاخصائي")
+    doctors_id = fields.Many2one('hr.employee', string="الاخصائي",related='patient_id.doctor', store=True)
     appointment_date = fields.Datetime(string="Appointment Date")
     appointment_type = fields.Selection([('checkup', 'Checkup'),('treatment', 'Treatment'),('consultation', 'Consultation')],string='Appointment Type')
     observation = fields.Text(string="Observation")

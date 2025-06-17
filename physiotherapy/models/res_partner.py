@@ -127,6 +127,14 @@ class Registration(models.Model):
                 'patient_id': res.id,
             })
 
+        if vals.get('is_patient'):
+            self.env['patient.appointment'].create({
+                'patient_id': res.id,
+                'doctors_id': res.doctor.id if res.doctor else False,
+                'appointment_date': fields.Datetime.now(),
+                'appointment_type': 'checkup',
+            })
+
         return res
 
     # @api.multi
