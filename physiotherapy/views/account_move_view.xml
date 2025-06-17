@@ -17,7 +17,7 @@
                 <xpath expr="//group[@id='header_right_group']" position="replace">
                     <group id="header_right_group">
                         <separator string="Subscription Info"/>
-                        <field name="date"/>
+                        <field name="start_date"/>
                         <field name="months"/>
                         <field name="end_date"/>
                     </group>
