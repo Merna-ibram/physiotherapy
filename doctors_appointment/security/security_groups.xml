@@ -25,8 +25,14 @@
         <record id="patient_appointment_rule_doctor" model="ir.rule">
             <field name="name">Doctor Appointment Rule</field>
             <field name="model_id" ref="model_patient_appointment"/>
-            <field name="groups" eval="[(4, ref('doctors_appointment.group_doctors_appointment_doctor'))]"/>
-            <field name="domain_force">[('doctors_id.user_id','=',user.id)]</field>
+<!--            <field name="groups" eval="[(4, ref('doctors_appointment.group_doctors_appointment_doctor'))]"/>-->
+<!--            <field name="domain_force">[('doctors_id.user_id','=',user.id)]</field>-->
+            <field name="domain_force">[(1,'=',1)]</field>
+
+            <field name="perm_read" eval="1"/>
+            <field name="perm_write" eval="1"/>
+            <field name="perm_create" eval="1"/>
+            <field name="perm_unlink" eval="1"/>
         </record>
     </data>
     

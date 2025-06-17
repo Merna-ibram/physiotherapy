@@ -19,7 +19,7 @@
                         <field name="appointment_type" />
                     </group>
 
-                    <notebook groups="doctors_appointment.group_doctors_appointment_doctor , doctors_appointment.group_doctors_appointment_administrator">
+                    <notebook>
                         <page name="Observation" string="Observation">
                             <field name="observation"
                                 placeholder="Enter Patients Observation Here!!" />
