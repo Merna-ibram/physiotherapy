@@ -18,6 +18,7 @@
 
     'data': [
         # Security
+        'security/rules.xml',
         'security/ir.model.access.csv',
 
 

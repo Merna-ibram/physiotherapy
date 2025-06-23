@@ -10,6 +10,8 @@ class Registration(models.Model):
     code = fields.Char(default='new', readonly=1, string="Code")
     age = fields.Integer(required=True, string="Age")
     gender = fields.Selection([('m', 'Male'), ('f', 'Female')], string="Gender",required=True)
+    national_address = fields.Text(string="عنوان وطني")
+    identity_info = fields.Text(string="رقم الهوية")
 
     doctor = fields.Many2one('hr.employee', string='الاخصائي')
 

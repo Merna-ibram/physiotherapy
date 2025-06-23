@@ -29,6 +29,12 @@
                             <field name="doctor"/>
                         </group>
 
+                        <separator string="معلومات إضافية"/>
+                        <group col="4" colspan="4" >
+                            <field name="identity_info" placeholder="مثال: لرقم القومي (في مصر) أو رقم الهوية (في السعوديةً)"/>
+                            <field name="national_address" placeholder="مثال:قم المبنى , اسم الشارع, اسم الحي, المدينة"/>
+                        </group>
+
                         <separator string="Diagnosis"/>
                         <group col="4" colspan="4">
                             <field name="diagnosis"/>

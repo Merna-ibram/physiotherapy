@@ -1,6 +1,7 @@
 <odoo>
     <data>
 
+        <!-- تعديل فورم الفاتورة -->
         <record id="view_account_form_inherit_medical" model="ir.ui.view">
             <field name="name">account.move.form.medical.inherit</field>
             <field name="model">account.move</field>
@@ -14,16 +15,20 @@
                        <field name="gender"/>
                    </group>
                </xpath>
-                <xpath expr="//group[@id='header_right_group']" position="replace">
+
+               <xpath expr="//group[@id='header_right_group']" position="replace">
                     <group id="header_right_group">
                         <separator string="Subscription Info"/>
                         <field name="date"/>
                         <field name="months"/>
                         <field name="end_date"/>
                     </group>
-                </xpath>
+               </xpath>
+
             </field>
         </record>
+
+        <!-- كرون جوب لإنشاء الفواتير -->
         <record id="ir_cron_create_subscription_invoices" model="ir.cron">
             <field name="name">Create Subscription Invoices</field>
             <field name="model_id" ref="account.model_account_move"/>
@@ -34,6 +39,22 @@
             <field name="numbercall">-1</field>
             <field name="active">True</field>
             <field name="user_id" ref="base.user_admin"/>
+        </record>
+
+        <!-- فلتر جديد بالهاتف في البحث -->
+        <record id="view_account_move_filter_inherit_mobile" model="ir.ui.view">
+            <field name="name">account.move.search.inherit.mobile</field>
+            <field name="model">account.move</field>
+            <field name="inherit_id" ref="account.view_account_invoice_filter"/>
+            <field name="arch" type="xml">
+                <xpath expr="//search" position="inside">
+                    <field name="mobile"/>
+                    <filter string="Mobile"
+                            name="filter_mobile"
+                            domain="[('partner_id.phone', 'ilike', '')]"
+                            help="Filter by customer phone or mobile"/>
+                </xpath>
+            </field>
         </record>
 
     </data>
