@@ -2,6 +2,8 @@
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
 
 from odoo import _, api, exceptions, fields, models
+from dateutil.relativedelta import relativedelta
+
 
 
 class Commission(models.Model):
@@ -43,6 +45,14 @@ class Commission(models.Model):
     )
     settlement_type = fields.Selection(selection="_selection_settlement_type")
 
+    # partner_id = fields.Many2one('res.partner', string="Agent")
+    # salary = fields.Float(
+    #     string="Salary",
+    #     related='partner_id.salary',
+    #     store=True,
+    #     readonly=True,
+    # )
+
     @api.model
     def _selection_settlement_type(self):
         """Return the same types as the settlements."""
@@ -64,6 +74,8 @@ class Commission(models.Model):
             if section.amount_from <= base <= section.amount_to:
                 return base * section.percent / 100.0
         return 0.0
+
+   
 
 
 class CommissionSection(models.Model):

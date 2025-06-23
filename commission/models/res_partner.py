@@ -1,13 +1,7 @@
-# Copyright 2018 Tecnativa - Ernesto Tejeda
-# Copyright 2016-2022 Tecnativa - Pedro M. Baeza
-# License AGPL-3 - See https://www.gnu.org/licenses/agpl-3.0.html
-
 from odoo import api, fields, models
 
 
 class ResPartner(models.Model):
-    """Add some fields related to commissions"""
-
     _inherit = "res.partner"
 
     agent_ids = fields.Many2many(
@@ -19,7 +13,6 @@ class ResPartner(models.Model):
         readonly=False,
         string="Agents",
     )
-    # Fields for the partner when it acts as an agent
     agent = fields.Boolean(
         string="Creditor/Agent",
         help="Check this field if the partner is a creditor or an agent.",
@@ -32,17 +25,10 @@ class ResPartner(models.Model):
     commission_id = fields.Many2one(
         string="Commission",
         comodel_name="commission",
-        help="This is the default commission used in the sales where this "
-        "agent is assigned. It can be changed on each operation if "
-        "needed.",
     )
-    # add by sikandar
     new_customer_commission = fields.Many2one(
         string="New Customer Commission",
         comodel_name="commission",
-        help="This is the default commission used in the sales where this "
-             "agent is assigned. It can be changed on each operation if "
-             "needed.",
     )
     settlement = fields.Selection(
         selection=[
@@ -60,14 +46,14 @@ class ResPartner(models.Model):
         inverse_name="agent_id",
         readonly=True,
     )
-
-    # field add for new customer
     new_customer = fields.Boolean(
         string="New Customer",
         help="Check this field if the partner is New Customer."
-    )#default=True
-
+    )
     new_customer_count = fields.Integer(default=1)
+
+    salary = fields.Float(string="Salary")
+
     res_partner_search_mode = fields.Selection(
         [('customer', 'Customer'), ('supplier', 'Supplier')],
         string='Search Mode', compute="default_partner_search_mode",
@@ -78,10 +64,8 @@ class ResPartner(models.Model):
         partner_search_mode = self.env.context.get('res_partner_search_mode')
         self.res_partner_search_mode = partner_search_mode
 
-
     @api.model
     def _commercial_fields(self):
-        """Add agents to commercial fields that are synced from parent to childs."""
         res = super()._commercial_fields()
         res.append("agent_ids")
         return res
