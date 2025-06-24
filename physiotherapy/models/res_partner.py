@@ -1,3 +1,4 @@
+from datetime import date
 from odoo import models, fields, api
 from odoo.exceptions import ValidationError
 
@@ -8,10 +9,13 @@ class Registration(models.Model):
 
     is_patient = fields.Boolean(string="Is a Patient")
     code = fields.Char(default='new', readonly=1, string="Code")
-    age = fields.Integer(required=True, string="Age")
+    birth_date = fields.Date(string="تاريخ الميلاد", required=True)
+    age = fields.Integer(string="العمر", compute="_compute_age", store=True)
     gender = fields.Selection([('m', 'Male'), ('f', 'Female')], string="Gender",required=True)
-    national_address = fields.Text(string="عنوان وطني")
-    identity_info = fields.Text(string="رقم الهوية")
+    
+    nationality_id = fields.Many2one('res.country', string="الجنسية", required=True)
+    national_address = fields.Text(string= "عنوان وطني" , required=True)
+    identity_info = fields.Text(string="رقم الهوية", required=True)
 
     doctor = fields.Many2one('hr.employee', string='الاخصائي')
 
@@ -102,11 +106,11 @@ class Registration(models.Model):
 
 
 
-    @api.constrains('age')
-    def _check_age_greater_zero(self):
-        for rec in self:
-            if rec.age == 0:
-                raise ValidationError('Please enter a valid age greater than 0')
+    # @api.constrains('age')
+    # def _check_age_greater_zero(self):
+    #     for rec in self:
+    #         if rec.age == 0:
+    #             raise ValidationError('Please enter a valid age greater than 0')
 
     # _sql_constraints = [
     #     ('unique_name', 'unique("name")', 'This name already exists! Please try another one.')
@@ -139,6 +143,27 @@ class Registration(models.Model):
 
         return res
 
+    @api.depends('birth_date')
+    def _compute_age(self):
+        for rec in self:
+            if rec.birth_date:
+                today = date.today()
+                rec.age = today.year - rec.birth_date.year - (
+                        (today.month, today.day) < (rec.birth_date.month, rec.birth_date.day)
+                )
+            else:
+                rec.age = 0
+
+    @api.onchange('birth_date')
+    def _onchange_birth_date(self):
+        if self.birth_date:
+            today = date.today()
+            self.age = today.year - self.birth_date.year - (
+                    (today.month, today.day) < (self.birth_date.month, self.birth_date.day)
+            )
+        else:
+            self.age = 0
+
     # @api.multi
     # def write(self, vals):
     #     res = super(Registration, self).write(vals)
@@ -154,3 +179,13 @@ class Registration(models.Model):
     #         if rec.is_patient and not rec.diagnosis:
     #             raise ValidationError("Diagnosis is required for patients.")
     #
+
+class CountryInherit(models.Model):
+    _inherit = 'res.country'
+
+    def name_get(self):
+        result = []
+        for record in self:
+            name = f"[{record.code}] {record.name}" if record.code else record.name
+            result.append((record.id, name))
+        return result
