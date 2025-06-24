@@ -17,11 +17,14 @@
                     <!-- Always visible fields -->
                     <group col="4" colspan="4">
                         <field name="code" readonly="1"/>
-                        <field name="age"/>
+                        <field name="birth_date"/>
+                        <field name="age" readonly="1"/>
                         <field name="gender"/>
                     </group>
+
                     <separator string="معلومات إضافية"/>
                         <group col="4" colspan="4" >
+                            <field name="nationality_id" placeholder="مثال: الجنسية - مصري / سعودي"/>
                             <field name="identity_info" placeholder="مثال: لرقم القومي (في مصر) أو رقم الهوية (في السعوديةً)"/>
                             <field name="national_address" placeholder="مثال:قم المبنى , اسم الشارع, اسم الحي, المدينة"/>
                         </group>
@@ -33,6 +36,7 @@
                         <group col="4" colspan="4">
                             <field name="doctor"/>
                         </group>
+
 
                         <separator string="Diagnosis"/>
                         <group col="4" colspan="4">
@@ -170,9 +174,7 @@
                 <xpath expr="//page[@name='sales_purchases']//field[@name='user_id']" position="attributes">
                     <attribute name="invisible">1</attribute>
                 </xpath>
-
             </field>
         </record>
-
     </data>
 </odoo>
