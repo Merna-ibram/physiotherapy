@@ -17,6 +17,7 @@ class AccountMove(models.Model):
     code = fields.Char(related='partner_id.code', readonly=1, string="Code")
     age = fields.Integer(related='partner_id.age', string="Age")
     gender = fields.Selection(related='partner_id.gender', string="Gender")
+    national_address = fields.Text(related='partner_id.national_address',string="عنوان وطني")
     mobile = fields.Char(related='partner_id.mobile', string="Mobile")
 
     invoice_created_months = fields.Integer(string="Created Invoices Count", default=0)
@@ -176,4 +177,24 @@ class AccountMove(models.Model):
     #
     #     return super(AccountMove, self).search_fetch(
     #         domain, field_names, offset=offset, limit=limit, order=order
-    #     )
+
+
+class AccountMoveLine(models.Model):
+    _inherit = 'account.move.line'
+
+    @api.model
+    def create(self, vals):
+        move = self.env['account.move'].browse(vals.get('move_id'))
+        partner = move.partner_id
+        # لو المريض له عنوان وطني، نشيل الضرائب
+        if partner and partner.national_address:
+            vals['tax_ids'] = [(5, 0, 0)]
+        return super().create(vals)
+
+    def write(self, vals):
+        for line in self:
+            partner = line.move_id.partner_id
+            if partner and partner.national_address:
+                vals['tax_ids'] = [(5, 0, 0)]
+        return super().write(vals)
+

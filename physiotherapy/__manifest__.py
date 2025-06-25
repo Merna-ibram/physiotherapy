@@ -7,6 +7,8 @@
     'license': 'LGPL-3',
     'application': True,
     'installable': True,
+    'post_init_hook': 'assign_country_codes_on_install',
+
 
 
     'depends': [
@@ -19,8 +21,10 @@
         'security/ir.model.access.csv',
 
 
+
         # Data
         'data/sequence.xml',
+        'data/server_action_country_code.xml',
 
 
         # Views

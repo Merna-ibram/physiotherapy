@@ -25,6 +25,7 @@
                     <separator string="معلومات إضافية"/>
                         <group col="4" colspan="4" >
                             <field name="nationality_id" placeholder="مثال: الجنسية - مصري / سعودي"/>
+                            <field name="state_code" readonly="1"/>
                             <field name="identity_info" placeholder="مثال: لرقم القومي (في مصر) أو رقم الهوية (في السعوديةً)"/>
                             <field name="national_address" placeholder="مثال:قم المبنى , اسم الشارع, اسم الحي, المدينة"/>
                         </group>
@@ -176,5 +177,17 @@
                 </xpath>
             </field>
         </record>
+
+        <record id="view_country_form_inherit_state_code" model="ir.ui.view">
+            <field name="name">res.country.form.inherit.state.code</field>
+            <field name="model">res.country</field>
+            <field name="inherit_id" ref="base.view_country_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='name']" position="after">
+                    <field name="state_code" readonly="1"/>
+                </xpath>
+            </field>
+        </record>
+
     </data>
 </odoo>

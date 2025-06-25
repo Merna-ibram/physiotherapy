@@ -12,9 +12,11 @@ class Registration(models.Model):
     birth_date = fields.Date(string="تاريخ الميلاد", required=True)
     age = fields.Integer(string="العمر", compute="_compute_age", store=True)
     gender = fields.Selection([('m', 'Male'), ('f', 'Female')], string="Gender",required=True)
-    
+
+
     nationality_id = fields.Many2one('res.country', string="الجنسية", required=True)
-    national_address = fields.Text(string= "عنوان وطني" , required=True)
+    state_code = fields.Char(string="كود الدولة", readonly=True, copy=False, default='new')
+    national_address = fields.Text(string= "عنوان وطني")
     identity_info = fields.Text(string="رقم الهوية", required=True)
 
     doctor = fields.Many2one('hr.employee', string='الاخصائي')
@@ -184,13 +186,48 @@ class Registration(models.Model):
     #         if rec.is_patient and not rec.diagnosis:
     #             raise ValidationError("Diagnosis is required for patients.")
     #
+#
+# class CountryInherit(models.Model):
+#     _inherit = 'res.country'
+#
+#     def name_get(self):
+#         result = []
+#         for record in self:
+#             name = f"[{record.code}] {record.name}" if record.code else record.name
+#             result.append((record.id, name))
+#         return result
 
 class CountryInherit(models.Model):
     _inherit = 'res.country'
 
+    state_code = fields.Char(string="كود الدولة", readonly=True, copy=False, default='new')
+
     def name_get(self):
         result = []
         for record in self:
-            name = f"[{record.code}] {record.name}" if record.code else record.name
+            name = f"[{record.state_code}] {record.name}" if record.state_code else record.name
             result.append((record.id, name))
         return result
+
+    @api.model
+    def create(self, vals):
+        if vals.get('state_code', 'new') == 'new':
+            next_code = self._get_next_state_code()
+            vals['state_code'] = str(next_code)
+        return super(CountryInherit, self).create(vals)
+
+    def _get_next_state_code(self):
+        existing_codes = self.search([('state_code', '!=', False)])
+        numeric_codes = [int(rec.state_code) for rec in existing_codes if rec.state_code.isdigit()]
+        return max(numeric_codes + [100]) + 1
+
+    @api.model
+    def assign_missing_state_codes(self):
+        code = 101
+        for country in self.search([], order='id'):
+            if not country.state_code:
+                country.state_code = str(code)
+                code += 1
+
+
+
