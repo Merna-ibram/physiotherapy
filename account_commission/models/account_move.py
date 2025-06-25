@@ -1,6 +1,7 @@
 # Copyright 2020 Tecnativa - Manuel Calero
 # Copyright 2014-2022 Tecnativa - Pedro M. Baeza
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
+from collections import defaultdict
 
 from lxml import etree
 
@@ -119,6 +120,78 @@ class AccountMove(models.Model):
                 invoice_line_field.attrib["context"] = context
                 res["arch"] = etree.tostring(invoice_xml)
         return res
+
+    @api.model
+    def create(self, vals):
+        move = super().create(vals)
+        print('Invoice created')
+
+        if move.move_type == "out_invoice" and move.partner_id:
+            partner = move.partner_id
+
+            # Loop through all agents for the partner
+            for agent in partner.agent_ids:
+                print(f"\nAgent: {agent.name}")
+                print(f"Salary: {agent.salary}")
+
+                # Get all customers with this agent
+                customers = self.env['res.partner'].search([
+                    ('agent_ids', 'in', agent.id)
+                ])
+
+                # Make sure the current partner is included in customers
+                if partner.id not in customers.ids:
+                    customers |= partner
+
+                # Get all posted invoices for these customers including the newly created one
+                invoices = self.env['account.move'].search([
+                    ('move_type', '=', 'out_invoice'),
+                    ('partner_id', 'in', customers.ids),
+                    ('state', '=', 'posted'),
+                    ('invoice_date', '!=', False),
+                ]) | move  # Include the current invoice if not posted yet
+                print(invoices)
+
+                # Group totals by month name
+                monthly_totals = defaultdict(float)
+                for inv in invoices:
+                    if inv.invoice_date:
+                        month_name = inv.invoice_date.strftime('%B')  # January, February, etc.
+                        monthly_totals[month_name] += inv.amount_total
+
+                # Ordered month names
+                ordered_months = [
+                    'January', 'February', 'March', 'April', 'May', 'June',
+                    'July', 'August', 'September', 'October', 'November', 'December'
+                ]
+
+                invoice_date = move.invoice_date or vals.get("invoice_date") or fields.Date.today()
+                current_month_name = invoice_date.strftime('%B')
+
+                for month in ordered_months:
+                    total = monthly_totals.get(month, 0.0)
+                    print(f"Agent: {agent.name}, Month: {month}, Total: {total:.2f}")
+                    if month == current_month_name:
+                        print(f"👉 Current Invoice Total This Month: {move.amount_total:.2f}")
+                    # After looping and calculating totals
+                    salary_val = agent.salary
+                    current_invoice_total = move.amount_total
+                    monthly_invoice_total = monthly_totals.get(current_month_name, 0.0)
+                    print(move.amount_total+total)
+                    print(salary_val*2)
+
+                    # Check condition and apply commission
+                    if move.amount_total+total==salary_val*2 : # float-safe comparison
+                        move.commission_total = salary_val + (salary_val * 0.05)
+                        print(f"✅ Commission calculated: {move.commission_total:.2f}")
+                    elif  move.amount_total == salary_val*2:
+                        move.commission_total = salary_val + (salary_val * 0.05)
+
+                    else:
+                        print(
+                            f"ℹ️ Commission not triggered. Total for {current_month_name} is {monthly_invoice_total:.2f}, needed: {salary_val * 2:.2f}")
+
+        return move
 
     def unlink(self):
         """Put 'invoiced' settlements associated to the invoices back in settled state."""
