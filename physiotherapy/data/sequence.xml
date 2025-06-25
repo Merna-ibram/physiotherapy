@@ -6,5 +6,8 @@
             <field name="prefix">P</field>
             <field name="padding">5</field>
         </record>
+
+        <function model="res.country" name="assign_missing_state_codes"/>
+
     </data>
 </odoo>

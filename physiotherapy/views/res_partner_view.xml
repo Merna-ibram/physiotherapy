@@ -1,6 +1,7 @@
 <odoo>
     <data>
 
+        <!-- Inherit res.partner form view -->
         <record id="view_partner_form_inherit_medical" model="ir.ui.view">
             <field name="name">res.partner.form.medical.inherit</field>
             <field name="model">res.partner</field>
@@ -9,12 +10,10 @@
 
                 <xpath expr="//field[@name='vat']" position="after">
 
-                    <!-- Checkbox -->
                     <group col="4" colspan="4">
                         <field name="is_patient"/>
                     </group>
 
-                    <!-- Always visible fields -->
                     <group col="4" colspan="4">
                         <field name="code" readonly="1"/>
                         <field name="birth_date"/>
@@ -23,14 +22,14 @@
                     </group>
 
                     <separator string="معلومات إضافية"/>
-                        <group col="4" colspan="4" >
-                            <field name="nationality_id" placeholder="مثال: الجنسية - مصري / سعودي"/>
-                            <field name="state_code" readonly="1"/>
-                            <field name="identity_info" placeholder="مثال: لرقم القومي (في مصر) أو رقم الهوية (في السعوديةً)"/>
-                            <field name="national_address" placeholder="مثال:قم المبنى , اسم الشارع, اسم الحي, المدينة"/>
-                        </group>
+                    <group col="4" colspan="4" >
+                        <field name="nationality_id" placeholder="مثال: 165 أو Egypt"/>
+<!--                        <field name="state_code"/>-->
+                        <field name="identity_info" placeholder="مثال: لرقم القومي (في مصر) أو رقم الهوية (في السعوديةً)"/>
+                        <field name="national_address" placeholder="مثال:قم المبنى , اسم الشارع, اسم الحي, المدينة"/>
+                    </group>
 
-                    <!-- The rest: only shown if is_patient is True -->
+                     <!-- The rest: only shown if is_patient is True -->
                     <group name="patient_section" invisible="is_patient == False" col="4" colspan="4">
 
                         <separator string="Patient Info"/>
@@ -178,15 +177,24 @@
             </field>
         </record>
 
+             <!-- View Inheritance -->
         <record id="view_country_form_inherit_state_code" model="ir.ui.view">
             <field name="name">res.country.form.inherit.state.code</field>
             <field name="model">res.country</field>
             <field name="inherit_id" ref="base.view_country_form"/>
             <field name="arch" type="xml">
                 <xpath expr="//field[@name='name']" position="after">
-                    <field name="state_code" readonly="1"/>
+                    <field name="state_code"/>
                 </xpath>
             </field>
+        </record>
+
+        <!-- Server Action to Trigger Assign Code -->
+        <record id="action_assign_missing_country_codes" model="ir.actions.server">
+            <field name="name">Assign Missing Country Codes</field>
+            <field name="model_id" ref="base.model_res_country"/>
+            <field name="state">code</field>
+            <field name="code">model.assign_missing_state_codes()</field>
         </record>
 
     </data>

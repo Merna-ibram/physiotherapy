@@ -24,7 +24,6 @@
 
         # Data
         'data/sequence.xml',
-        'data/server_action_country_code.xml',
 
 
         # Views

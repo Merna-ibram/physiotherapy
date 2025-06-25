@@ -1,6 +1,7 @@
 from datetime import date
 from odoo import models, fields, api
 from odoo.exceptions import ValidationError
+from odoo.osv import expression
 
 
 class Registration(models.Model):
@@ -15,7 +16,7 @@ class Registration(models.Model):
 
 
     nationality_id = fields.Many2one('res.country', string="الجنسية", required=True)
-    state_code = fields.Char(string="كود الدولة", readonly=True, copy=False, default='new')
+    # state_code = fields.Char(string="كود الدولة", related="nationality_id.state_code", store=True)
     national_address = fields.Text(string= "عنوان وطني")
     identity_info = fields.Text(string="رقم الهوية", required=True)
 
@@ -200,34 +201,37 @@ class Registration(models.Model):
 class CountryInherit(models.Model):
     _inherit = 'res.country'
 
-    state_code = fields.Char(string="كود الدولة", readonly=True, copy=False, default='new')
+    state_code = fields.Char(string="كود الدولة", copy=False)
 
     def name_get(self):
         result = []
         for record in self:
-            name = f"[{record.state_code}] {record.name}" if record.state_code else record.name
+            name = f"{record.name} [{record.state_code}]" if record.state_code else record.name
             result.append((record.id, name))
         return result
 
     @api.model
     def create(self, vals):
-        if vals.get('state_code', 'new') == 'new':
-            next_code = self._get_next_state_code()
-            vals['state_code'] = str(next_code)
+        # Remove 'new' default; instead, use assign_missing_state_codes to fill
         return super(CountryInherit, self).create(vals)
-
-    def _get_next_state_code(self):
-        existing_codes = self.search([('state_code', '!=', False)])
-        numeric_codes = [int(rec.state_code) for rec in existing_codes if rec.state_code.isdigit()]
-        return max(numeric_codes + [100]) + 1
 
     @api.model
     def assign_missing_state_codes(self):
         code = 101
-        for country in self.search([], order='id'):
-            if not country.state_code:
+        countries = self.search([], order='id')
+        for country in countries:
+            if not country.state_code or country.state_code == 'new':
+                # Skip if code already used
+                while str(code) in countries.mapped('state_code'):
+                    code += 1
                 country.state_code = str(code)
                 code += 1
 
+    @api.model
+    def name_search(self, name='', args=None, operator='ilike', limit=100):
+        args = args or []
+        domain = args[:]
 
-
+        if name:
+            domain = ['|', ('name', operator, name), ('state_code', operator, name)] + domain
+        return self.search(domain, limit=limit).name_get()
