@@ -8,8 +8,9 @@
     "category": "Sales Management",
     "license": "AGPL-3",
     "depends": [
-        "account",
+        'base',
         "commission",
+        'account',
     ],
     "website": "https://github.com/OCA/commission",
     "maintainers": ["pedrobaeza"],

@@ -7,7 +7,7 @@
     "author": "Tecnativa, Odoo Community Association (OCA)",
     "category": "Invoicing",
     "license": "AGPL-3",
-    "depends": ["product",'account','hr', 'physiotherapy'],
+    "depends": ["product",'account','hr',],
     "website": "https://github.com/OCA/commission",
     "maintainers": ["pedrobaeza"],
     "data": [

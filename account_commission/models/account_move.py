@@ -16,8 +16,6 @@ class AccountMove(models.Model):
             rec.new_customer = rec.partner_id.new_customer
     commission_total = fields.Float(
         string="Commissions",
-        compute="_compute_commission_total",
-        store=True,
     )
     partner_agent_ids = fields.Many2many(
         string="Agents",
@@ -66,12 +64,12 @@ class AccountMove(models.Model):
         )
         return [("id", "in", ail_agents.mapped("object_id.move_id").ids)]
 
-    @api.depends("line_ids.agent_ids.amount")
-    def _compute_commission_total(self):
-        for record in self:
-            record.commission_total = 0.0
-            for line in record.line_ids:
-                record.commission_total += sum(x.amount for x in line.agent_ids)
+    # @api.depends("line_ids.agent_ids.amount")
+    # def _compute_commission_total(self):
+    #     for record in self:
+    #         record.commission_total = 0.0
+    #         for line in record.line_ids:
+    #             record.commission_total += sum(x.amount for x in line.agent_ids)
 
     def action_post(self):
         """Put settlements associated to the invoices in invoiced state."""

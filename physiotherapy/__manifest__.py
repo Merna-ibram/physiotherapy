@@ -10,16 +10,13 @@
 
 
     'depends': [
-        'base',
-        'account',
-        'mail',
-        'hr',
+        'base','account'
     ],
 
     'data': [
         # Security
-        'security/rules.xml',
-        'security/ir.model.access.csv',
+        # 'security/rules.xml',
+        # 'security/ir.model.access.csv',
 
 
         # Data
