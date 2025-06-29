@@ -13,5 +13,6 @@
         "report/patient_prescription_view.xml",
         'views/menu.xml',
         'views/patients_appoi.xml',
+        'views/doctor_appointment_view.xml',
     ]
 }
