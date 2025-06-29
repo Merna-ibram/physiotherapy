@@ -31,20 +31,20 @@ class PatientAppointment(models.Model):
             'doctors_id': self.doctors_id,
         }
 
-    @api.model
-    def search_fetch(self, domain, field_names, offset=0, limit=None, order=None):
-        user = self.env.user
+    # @api.model
+    # def search_fetch(self, domain, field_names, offset=0, limit=None, order=None):
+    #     user = self.env.user
 
-        # Check if user is in the doctor group
-        if user.has_group('doctors_appointment.group_doctors_appointment_doctor'):
-            domain = expression.AND([
-                domain,
-                [('partner_id.doctor.user_id', '=', user.id)]
-            ])
+    #     # Check if user is in the doctor group
+    #     if user.has_group('doctors_appointment.group_doctors_appointment_doctor'):
+    #         domain = expression.AND([
+    #             domain,
+    #             [('partner_id.doctor.user_id', '=', user.id)]
+    #         ])
 
-        return super(PatientAppointment, self).search_fetch(
-            domain, field_names, offset=offset, limit=limit, order=order
-        )
+    #     return super(PatientAppointment, self).search_fetch(
+    #         domain, field_names, offset=offset, limit=limit, order=order
+    #     )
 
 class PatientPharmacyLines(models.Model):
     _name = "patient.pharmacy.lines"
