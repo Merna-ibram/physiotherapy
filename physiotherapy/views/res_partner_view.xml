@@ -22,9 +22,11 @@
                     </group>
 
                     <separator string="معلومات إضافية"/>
+                   <group col="2" colspan="4">
+                       <field name="nationality_id" placeholder="مثال: Egypt"/>
+                       <field name="state_code" placeholder="مثال: 165"/>
+                   </group>
                     <group col="4" colspan="4" >
-                        <field name="nationality_id" placeholder="مثال: 165 أو Egypt"/>
-<!--                        <field name="state_code"/>-->
                         <field name="identity_info" placeholder="مثال: لرقم القومي (في مصر) أو رقم الهوية (في السعوديةً)"/>
                         <field name="national_address" placeholder="مثال:قم المبنى , اسم الشارع, اسم الحي, المدينة"/>
                     </group>
