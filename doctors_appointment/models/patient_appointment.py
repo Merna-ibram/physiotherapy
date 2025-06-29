@@ -31,25 +31,20 @@ class PatientAppointment(models.Model):
             'doctors_id': self.doctors_id,
         }
 
-    @api.depends('quantity', 'unit_price')
-    def _compute_total(self):
-        for line in self:
-            line.total = line.quantity * line.unit_price
-    #
-    # @api.model
-    # def search_fetch(self, domain, field_names, offset=0, limit=None, order=None):
-    #     user = self.env.user
-    #
-    #     # Check if user is in the doctor group
-    #     if user.has_group('doctors_appointment.group_doctors_appointment_doctor'):
-    #         domain = expression.AND([
-    #             domain,
-    #             [[('doctors_id.user_id', '=', user.id)]]
-    #         ])
-    #
-    #     return super(PatientAppointment, self).search_fetch(
-    #         domain, field_names, offset=offset, limit=limit, order=order
-    #     )
+    @api.model
+    def search_fetch(self, domain, field_names, offset=0, limit=None, order=None):
+        user = self.env.user
+
+        # Check if user is in the doctor group
+        if user.has_group('doctors_appointment.group_doctors_appointment_doctor'):
+            domain = expression.AND([
+                domain,
+                [('partner_id.doctor.user_id', '=', user.id)]
+            ])
+
+        return super(PatientAppointment, self).search_fetch(
+            domain, field_names, offset=offset, limit=limit, order=order
+        )
 
 class PatientPharmacyLines(models.Model):
     _name = "patient.pharmacy.lines"
@@ -61,6 +56,11 @@ class PatientPharmacyLines(models.Model):
     total = fields.Float(string="Total", compute="_compute_total", store=True)
     appointment_id = fields.Many2one('patient.appointment', string="Appointment")
     in_prescription = fields.Boolean(default=False, string='In Prescription' )
+
+    @api.depends('quantity', 'unit_price')
+    def _compute_total(self):
+        for line in self:
+            line.total = line.quantity * line.unit_price
 
 
 
