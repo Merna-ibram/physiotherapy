@@ -18,7 +18,7 @@ class AccountMove(models.Model):
     age = fields.Integer(related='partner_id.age', string="Age")
     gender = fields.Selection(related='partner_id.gender', string="Gender")
     national_address = fields.Text(related='partner_id.national_address',string="عنوان وطني")
-    mobile = fields.Char(related='partner_id.mobile', string="Mobile")
+    mobile = fields.Char(related='partner_id.mobile', string="Mobile", store=True)
 
     invoice_created_months = fields.Integer(string="Created Invoices Count", default=0)
     # doctor_user_id = fields.Many2one('res.users', compute='_compute_doctor_user_id', store=True)
@@ -27,6 +27,16 @@ class AccountMove(models.Model):
     # def _compute_doctor_user_id(self):
     #     for rec in self:
     #         rec.doctor_user_id = rec.partner_id.doctor.user_id
+
+    # search_mobile = fields.Char(string="بحث بالموبايل", compute="_compute_dummy_mobile", store=False)
+    #
+    # @api.depends('partner_id.mobile')
+    # def _compute_dummy_mobile(self):
+    #     for rec in self:
+    #         rec.search_mobile = ''
+    #
+    # def _search_search_mobile(self, operator, value):
+    #     return [('partner_id.mobile', operator, value)]
 
 
     @api.depends('date', 'months')
