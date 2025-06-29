@@ -16,7 +16,7 @@ class Registration(models.Model):
 
 
     nationality_id = fields.Many2one('res.country', string="الجنسية", required=True)
-    # state_code = fields.Char(string="كود الدولة", related="nationality_id.state_code", store=True)
+    state_code = fields.Char(string="كود الدولة")
     national_address = fields.Text(string= "عنوان وطني")
     identity_info = fields.Text(string="رقم الهوية", required=True)
 
@@ -124,6 +124,20 @@ class Registration(models.Model):
     #     ('unique_name', 'unique("name")', 'This name already exists! Please try another one.')
     # ]
 
+    @api.onchange('nationality_id')
+    def _onchange_nationality(self):
+        if self.nationality_id:
+            self.state_code = self.nationality_id.state_code
+        else:
+            self.state_code = False
+
+    @api.onchange('state_code')
+    def _onchange_state_code(self):
+        if self.state_code:
+            country = self.env['res.country'].search([('state_code', '=', self.state_code)], limit=1)
+            self.nationality_id = country if country else False
+        else:
+            self.nationality_id = False
 
     @api.model
     def create(self, vals):
