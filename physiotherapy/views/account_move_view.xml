@@ -13,6 +13,7 @@
                        <field name="code"/>
                        <field name="age"/>
                        <field name="gender"/>
+                       <field name="mobile"/>
                    </group>
                </xpath>
 

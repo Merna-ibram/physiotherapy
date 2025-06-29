@@ -1,4 +1,5 @@
 from odoo import api, models, fields
+from odoo.osv import expression
 class PatientAppointment(models.Model):
     _name = "patient.appointment"
     _description = "Patient Records"
@@ -30,6 +31,26 @@ class PatientAppointment(models.Model):
             'doctors_id': self.doctors_id,
         }
 
+    @api.depends('quantity', 'unit_price')
+    def _compute_total(self):
+        for line in self:
+            line.total = line.quantity * line.unit_price
+    #
+    # @api.model
+    # def search_fetch(self, domain, field_names, offset=0, limit=None, order=None):
+    #     user = self.env.user
+    #
+    #     # Check if user is in the doctor group
+    #     if user.has_group('doctors_appointment.group_doctors_appointment_doctor'):
+    #         domain = expression.AND([
+    #             domain,
+    #             [[('doctors_id.user_id', '=', user.id)]]
+    #         ])
+    #
+    #     return super(PatientAppointment, self).search_fetch(
+    #         domain, field_names, offset=offset, limit=limit, order=order
+    #     )
+
 class PatientPharmacyLines(models.Model):
     _name = "patient.pharmacy.lines"
     _description = "Patient Pharmacy Lines"
@@ -41,10 +62,6 @@ class PatientPharmacyLines(models.Model):
     appointment_id = fields.Many2one('patient.appointment', string="Appointment")
     in_prescription = fields.Boolean(default=False, string='In Prescription' )
 
-    @api.depends('quantity', 'unit_price')
-    def _compute_total(self):
-        for line in self:
-            line.total = line.quantity * line.unit_price
 
 
     def addto_prescription(self):
@@ -72,6 +89,7 @@ class PatientPharmacyLines(models.Model):
             prescription_lines.unlink()
             self.in_prescription = False
         return {'type': 'ir.actions.act_window_close'}
+
     
 class PatientPrescriptionLine(models.Model):
     _name = 'patient.prescription.line'

@@ -3,10 +3,10 @@
     "author": 'Shins',
     'version': '0.1',
     'license': 'LGPL-3',
-    "depends": ['base','hr','report_xlsx','physiotherapy'],
+    "depends": ['base','hr','stock','report_xlsx', 'physiotherapy'],
     'data': [
-        # 'security/security_groups.xml',
-        # 'security/ir.model.access.csv',
+        'security/security_groups.xml',
+        'security/ir.model.access.csv',
         'wizard/patient_wiz.xml',
         "report/patient_prescription_template.xml",
         "data/header.xml",

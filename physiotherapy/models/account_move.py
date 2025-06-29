@@ -37,11 +37,11 @@ class AccountMove(models.Model):
             else:
                 record.end_date = False
 
-    # @api.model
-    # def create(self, vals):
-    #     if vals.get('start_date') and not vals.get('invoice_date'):
-    #         vals['invoice_date'] = vals['start_date']
-    #     return super(AccountMove, self).create(vals)
+    @api.model
+    def create(self, vals):
+        if vals.get('start_date') and not vals.get('invoice_date'):
+            vals['invoice_date'] = vals['start_date']
+        return super(AccountMove, self).create(vals)
 
     def create_subscription_invoices(self):
         subscription_invoices = self.search([
@@ -118,39 +118,84 @@ class AccountMove(models.Model):
 
                 print(self.commission_total)
 
-
-
     # @api.model
-    # def search_fetch(self, domain, field_names, offset=0, limit=None, order=None):
-    #     user = self.env.user
+    # def create(self, vals):
+    #     move = super().create(vals)
+    #     print('invoice')
+    #     if vals.get("move_type") == "out_invoice":
+    #         partner = self.env['res.partner'].browse(vals['partner_id'])
+    #         salary = partner.salary or 0.0
+    #         print(salary)
+    #         print(move.start_date)
     #
-    #     # Check if user is in the doctor group
-    #     if user.has_group('doctors_appointment.group_doctors_appointment_doctor'):
-    #         domain = expression.AND([
-    #             domain,
-    #             [('partner_id.doctor.user_id', '=', user.id)]
-    #         ])
+    #         # Check if invoice_date exists before processing
+    #         if not move.start_date:
+    #             print("Invoice date is not set, skipping commission calculation")
+    #             return move
     #
-    #     return super(AccountMove, self).search_fetch(
-    #         domain, field_names, offset=offset, limit=limit, order=order
+    #         from calendar import monthrange
+    #         year = move.start_date.year
+    #         month = move.start_date.month
+    #
+    #         # First day of the month
+    #         month_start = move.start_date.replace(day=1)
+    #
+    #         # Last day of the month (handles varying month lengths)
+    #         last_day = monthrange(year, month)[1]
+    #         month_end = move.start_date.replace(day=last_day)
+    #
+    #         print(f"Month range: {month_start} to {month_end}")
+    #
+    #         domain = [
+    #             ('move_type', '=', 'out_invoice'),
+    #             ('state', '!=', 'cancel'),
+    #             ('partner_id', '=', partner.id),
+    #             ('invoice_date', '>=', month_start),
+    #             ('invoice_date', '<=', month_end)
+    #         ]
+    #         invoices = self.search(domain)
+    #         print(invoices)
+    #         total_month = sum(inv.amount_total for inv in invoices)
+    #         print(total_month)
+    #
+    #         if salary > 0 and total_month >= 2 * salary:
+    #             move.commission_total = salary + (salary * 0.15)
+    #             move.message_post(body="Commission Auto Set: Total invoices this month exceed 2x salary.")
+    #
+    #     return move
+    #
+    @api.model
+    def search_fetch(self, domain, field_names, offset=0, limit=None, order=None):
+        user = self.env.user
+
+        # Check if user is in the doctor group
+        if user.has_group('doctors_appointment.group_doctors_appointment_doctor'):
+            domain = expression.AND([
+                domain,
+                [('partner_id.doctor.user_id', '=', user.id)]
+            ])
+
+        return super(AccountMove, self).search_fetch(
+            domain, field_names, offset=offset, limit=limit, order=order
+        )
 
 
 class AccountMoveLine(models.Model):
     _inherit = 'account.move.line'
 
-    # @api.model
-    # def create(self, vals):
-    #     move = self.env['account.move'].browse(vals.get('move_id'))
-    #     partner = move.partner_id
-    #     # لو المريض له عنوان وطني، نشيل الضرائب
-    #     if partner and partner.national_address:
-    #         vals['tax_ids'] = [(5, 0, 0)]
-    #     return super().create(vals)
-    #
-    # def write(self, vals):
-    #     for line in self:
-    #         partner = line.move_id.partner_id
-    #         if partner and partner.national_address:
-    #             vals['tax_ids'] = [(5, 0, 0)]
-    #     return super().write(vals)
+    @api.model
+    def create(self, vals):
+        move = self.env['account.move'].browse(vals.get('move_id'))
+        partner = move.partner_id
+        # لو المريض له عنوان وطني، نشيل الضرائب
+        if partner and partner.national_address:
+            vals['tax_ids'] = [(5, 0, 0)]
+        return super().create(vals)
+
+    def write(self, vals):
+        for line in self:
+            partner = line.move_id.partner_id
+            if partner and partner.national_address:
+                vals['tax_ids'] = [(5, 0, 0)]
+        return super().write(vals)
 

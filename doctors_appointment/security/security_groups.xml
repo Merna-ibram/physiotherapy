@@ -26,40 +26,40 @@
     <data noupdate="1">
 
         <!-- Rule for Doctor: See own appointments only -->
-<!--        <record id="rule_patient_appointment_doctor" model="ir.rule">-->
-<!--            <field name="name">Doctor: See own appointments</field>-->
-<!--            <field name="model_id" ref="doctors_appointment.model_patient_appointment"/>-->
-<!--            <field name="domain_force">[('doctors_id.user_id', '=', user.id)]</field>-->
-<!--            <field name="groups" eval="[(4, ref('doctors_appointment.group_doctors_appointment_doctor'))]"/>-->
-<!--            <field name="perm_read" eval="True"/>-->
-<!--            <field name="perm_write" eval="True"/>-->
-<!--            <field name="perm_create" eval="True"/>-->
-<!--            <field name="perm_unlink" eval="True"/>-->
-<!--        </record>-->
+        <record id="rule_patient_appointment_doctor" model="ir.rule">
+            <field name="name">Doctor: See own appointments</field>
+            <field name="model_id" ref="doctors_appointment.model_patient_appointment"/>
+            <field name="domain_force">[('doctors_id.user_id', '=', user.id)]</field>
+            <field name="groups" eval="[(4, ref('doctors_appointment.group_doctors_appointment_doctor'))]"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_unlink" eval="True"/>
+        </record>
 
         <!-- Rule for Admin: See all appointments -->
-<!--        <record id="rule_patient_appointment_admin" model="ir.rule">-->
-<!--            <field name="name">Admin: See all appointments</field>-->
-<!--            <field name="model_id" ref="doctors_appointment.model_patient_appointment"/>-->
-<!--            <field name="domain_force">[(1, '=', 1)]</field>-->
-<!--            <field name="groups" eval="[(4, ref('doctors_appointment.group_doctors_appointment_administrator'))]"/>-->
-<!--            <field name="perm_read" eval="True"/>-->
-<!--            <field name="perm_write" eval="True"/>-->
-<!--            <field name="perm_create" eval="True"/>-->
-<!--            <field name="perm_unlink" eval="True"/>-->
-<!--        </record>-->
+        <record id="rule_patient_appointment_admin" model="ir.rule">
+            <field name="name">Admin: See all appointments</field>
+            <field name="model_id" ref="doctors_appointment.model_patient_appointment"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="groups" eval="[(4, ref('doctors_appointment.group_doctors_appointment_administrator'))]"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_unlink" eval="True"/>
+        </record>
 
         <!-- Rule for Reception: Read all only -->
-<!--        <record id="rule_patient_appointment_reception" model="ir.rule">-->
-<!--            <field name="name">Reception: Read all appointments</field>-->
-<!--            <field name="model_id" ref="doctors_appointment.model_patient_appointment"/>-->
-<!--            <field name="domain_force">[(1, '=', 1)]</field>-->
-<!--            <field name="groups" eval="[(4, ref('doctors_appointment.group_doctors_appointment_recption'))]"/>-->
-<!--            <field name="perm_read" eval="True"/>-->
-<!--            <field name="perm_write" eval="False"/>-->
-<!--            <field name="perm_create" eval="False"/>-->
-<!--            <field name="perm_unlink" eval="False"/>-->
-<!--        </record>-->
+        <record id="rule_patient_appointment_reception" model="ir.rule">
+            <field name="name">Reception: Read all appointments</field>
+            <field name="model_id" ref="doctors_appointment.model_patient_appointment"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="groups" eval="[(4, ref('doctors_appointment.group_doctors_appointment_recption'))]"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
 
     </data>
 

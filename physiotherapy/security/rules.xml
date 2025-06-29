@@ -31,11 +31,12 @@
             <field name="model_id" ref="model_my_cases"/>
             <field name="domain_force">[('doctor.user_id', '=', user.id)]</field>
             <field name="groups" eval="[(4, ref('doctors_appointment.group_doctors_appointment_doctor'))]"/>
-            <field name="perm_read" eval="True"/>
-            <field name="perm_write" eval="True"/>
-            <field name="perm_create" eval="True"/>
-            <field name="perm_unlink" eval="False"/>
+            <field name="perm_read" eval="1"/>
+            <field name="perm_write" eval="1"/>
+            <field name="perm_create" eval="1"/>
+            <field name="perm_unlink" eval="0"/>
         </record>
+
 
         <!-- Admin: يشوف كل الحالات -->
         <record id="rule_my_cases_admin" model="ir.rule">
