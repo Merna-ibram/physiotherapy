@@ -7,12 +7,14 @@
     'license': 'LGPL-3',
     'application': True,
     'installable': True,
-    'post_init_hook': 'assign_country_codes_on_install',
+    'category': 'Healthcare',
+
+    # 'post_init_hook': 'assign_country_codes_on_install',
 
 
 
     'depends': [
-        'base','account'
+        'base','account',
     ],
 
     'data': [

@@ -1,0 +1,37 @@
+<odoo>
+    <data>
+        <!-- QWeb Template -->
+        <template id="report_doctor_daily_appointments_template">
+            <t t-call="web.external_layout">
+                <div class="page">
+                    <h2>📅 تقرير مواعيد الدكتور: <t t-esc="data['doctor_name']"/></h2>
+                    <p>📆 التاريخ: <t t-esc="data['selected_date']"/></p>
+
+                    <t t-set="appointments" t-value="docs.env['doctor.appointment'].browse(data['appointments'])"/>
+                    <ul>
+                        <t t-foreach="appointments" t-as="appt">
+                            <li>
+                                🧍 <strong>المريض:</strong> <t t-esc="appt.patient_id.name"/> |
+                                ⏰ <strong>الساعة:</strong> <t t-esc="appt.appointment_date.strftime('%H:%M')"/>
+                            </li>
+                        </t>
+                    </ul>
+
+                    <t t-if="not appointments">
+                        <p>لا توجد مواعيد محجوزة في هذا اليوم.</p>
+                    </t>
+                </div>
+            </t>
+        </template>
+
+        <!-- Report Declaration -->
+        <report
+            id="report_doctor_daily_appointments"
+            model="appointment.report.wizard"
+            string="تقرير مواعيدي اليومية"
+            report_type="qweb-pdf"
+            name="doctors_appointment.report_doctor_daily_appointments_template"
+            file="doctors_appointment.report_doctor_daily_appointments_template"
+            print_report_name="'تقرير - %s' % (data['doctor_name'])"/>
+    </data>
+</odoo>
