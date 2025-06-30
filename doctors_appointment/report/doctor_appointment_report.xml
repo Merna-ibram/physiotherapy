@@ -1,13 +1,28 @@
 <odoo>
     <data>
         <!-- QWeb Template -->
+
+          <record model="ir.actions.report" id="report_doctor_daily_appointments_action">
+        <field name="name">فاتورة القسط</field>
+        <field name="model">appointment.report.wizard</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="print_report_name">'فاتورة - %s' % (object.name)</field>
+        <field name="binding_type">report</field>
+        <field name="report_name">doctors_appointment.report_doctor_daily_appointments_template</field>
+        <field name="report_file">doctors_appointment.report_doctor_daily_appointments_template</field>
+
+    </record>
+
+
         <template id="report_doctor_daily_appointments_template">
+                <t t-call="web.html_container">
             <t t-call="web.external_layout">
                 <div class="page">
+
                     <h2>📅 تقرير مواعيد الدكتور: <t t-esc="data['doctor_name']"/></h2>
                     <p>📆 التاريخ: <t t-esc="data['selected_date']"/></p>
 
-                    <t t-set="appointments" t-value="docs.env['doctor.appointment'].browse(data['appointments'])"/>
+            <t t-set="appointments" t-value="data['appointments']"/>
                     <ul>
                         <t t-foreach="appointments" t-as="appt">
                             <li>
@@ -22,16 +37,11 @@
                     </t>
                 </div>
             </t>
+            </t>
         </template>
 
         <!-- Report Declaration -->
-        <report
-            id="report_doctor_daily_appointments"
-            model="appointment.report.wizard"
-            string="تقرير مواعيدي اليومية"
-            report_type="qweb-pdf"
-            name="doctors_appointment.report_doctor_daily_appointments_template"
-            file="doctors_appointment.report_doctor_daily_appointments_template"
-            print_report_name="'تقرير - %s' % (data['doctor_name'])"/>
+
+
     </data>
 </odoo>

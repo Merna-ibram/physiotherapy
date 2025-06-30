@@ -10,17 +10,17 @@
     <!-- User Groups -->
     <record id="group_doctors_appointment_administrator" model="res.groups">
         <field name="name">Administrator</field>
-        <field name="category_id" ref="module_doctors_appointment"/>
+        <field name="category_id" ref="doctors_appointment.module_doctors_appointment"/>
     </record>
 
     <record id="group_doctors_appointment_recption" model="res.groups">
         <field name="name">Recption</field>
-        <field name="category_id" ref="module_doctors_appointment"/>
+        <field name="category_id" ref="doctors_appointment.module_doctors_appointment"/>
     </record>
 
     <record id="group_doctors_appointment_doctor" model="res.groups">
         <field name="name">Doctor</field>
-        <field name="category_id" ref="module_doctors_appointment"/>
+        <field name="category_id" ref="doctors_appointment.module_doctors_appointment"/>
     </record>
 
 <!--    <data noupdate="1">-->

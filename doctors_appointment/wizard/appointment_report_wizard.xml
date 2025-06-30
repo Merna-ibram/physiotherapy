@@ -26,8 +26,8 @@
 
     <menuitem id="menu_doctor_daily_report"
               name="تقرير مواعيدي اليومية"
-              parent="menu_doctor_appointments"
-              action="action_appointment_report_wizard"/>
+              parent="menu_doctors_appointment"
+              action="action_appointment_report_wizard" sequence="15"/>
 </odoo>
 
 

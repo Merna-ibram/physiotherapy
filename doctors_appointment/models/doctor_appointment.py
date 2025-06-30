@@ -57,3 +57,11 @@ class DoctorAppointment(models.Model):
                 rec.is_this_week = start_of_week <= date_only <= end_of_week
             else:
                 rec.is_this_week = False
+
+    
+
+
+
+
+
+

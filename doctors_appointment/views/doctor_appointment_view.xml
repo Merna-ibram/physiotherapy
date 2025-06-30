@@ -10,10 +10,11 @@
     </record>
 
     <!-- Sub Menu: Appointments -->
-    <menuitem id="menu_doctor_appointments"
-              name="Appointments"
+    <menuitem id="menu_doctor"
+              name="Doctor"
               parent="menu_doctors_appointment"
-              action="action_doctor_appointment"/>
+              action="action_doctor_appointment" sequence="12"/>
+
 
     <!-- Tree View -->
     <record id="view_doctor_appointment_tree" model="ir.ui.view">
