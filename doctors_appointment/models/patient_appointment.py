@@ -1,4 +1,5 @@
 from odoo import api, models, fields
+from datetime import datetime, timedelta
 from odoo.osv import expression
 class PatientAppointment(models.Model):
     _name = "patient.appointment"
@@ -13,7 +14,24 @@ class PatientAppointment(models.Model):
     pharmacy_line_ids = fields.One2many('patient.pharmacy.lines', 'appointment_id', string='Pharmacy Lines')
     patient_prescription_line_ids = fields.One2many('patient.prescription.line','prescription_id',string='Prescription Lines')
     total_amount = fields.Float(string="Total Amount", compute="_compute_total_amount", store=True)
+    done = fields.Boolean(string="تم", default=False)
+    notes = fields.Text(string="ملاحظات")
+    is_reserved = fields.Boolean(string="محجوز؟", default=False)
 
+    is_this_week = fields.Boolean(string="هذا الأسبوع", compute='_compute_is_this_week', store=False)
+
+    @api.depends('appointment_date')
+    def _compute_is_this_week(self):
+        today = fields.Date.context_today(self)
+        start_of_week = today - timedelta(days=today.weekday())  # يوم الاثنين
+        end_of_week = start_of_week + timedelta(days=6)  # الأحد
+
+        for rec in self:
+            if rec.appointment_date:
+                date_only = rec.appointment_date.date()
+                rec.is_this_week = start_of_week <= date_only <= end_of_week
+            else:
+                rec.is_this_week = False
     @api.depends('pharmacy_line_ids.total')
     def _compute_total_amount(self):
         for appointment in self:
@@ -66,10 +84,10 @@ class PatientPharmacyLines(models.Model):
 
     def addto_prescription(self):
         return {
-        
+
             'name': 'Add Medicine to Prescription',
             'view_mode': 'form',
-            'res_model': 'patient.prescription.wizard',          
+            'res_model': 'patient.prescription.wizard',
             'type': 'ir.actions.act_window',
             'target': 'new',
             'context':{
@@ -79,7 +97,7 @@ class PatientPharmacyLines(models.Model):
 
             }
         }
-    
+
     def action_remove_from_prescription(self):
         prescription_lines = self.env['patient.prescription.line'].search([
             ('medicine_id', '=', self.medicine_id.id),
@@ -90,7 +108,7 @@ class PatientPharmacyLines(models.Model):
             self.in_prescription = False
         return {'type': 'ir.actions.act_window_close'}
 
-    
+
 class PatientPrescriptionLine(models.Model):
     _name = 'patient.prescription.line'
     _description = 'Patient Prescription Line'

@@ -17,6 +17,8 @@
                         <field name="doctors_id" />
                         <field name="appointment_date" />
                         <field name="appointment_type" />
+                        <field name="is_reserved"/>
+                        <field name="done"/>
                     </group>
 
                     <notebook>
@@ -75,6 +77,7 @@
                 <field name="doctors_id" />
                 <field name="appointment_date" />
                 <field name="appointment_type" />
+                <field name="is_reserved"/>
                 <field name="total_amount" />
             </tree>
         </field>

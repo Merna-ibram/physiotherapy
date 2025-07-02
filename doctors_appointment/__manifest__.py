@@ -12,7 +12,6 @@
 
         'views/menu.xml',
         'views/patients_appoi.xml',
-        'views/doctor_appointment_view.xml',
 
         'wizard/patient_wiz.xml',
         'wizard/appointment_report_wizard.xml',

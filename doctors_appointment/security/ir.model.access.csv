@@ -5,5 +5,4 @@ access_patient_pharmacy_lines,Access Patient Pharmacy Lines,doctors_appointment.
 access_patient_prescription_wizard,Access Prescription Wizard,doctors_appointment.model_patient_prescription_wizard,,1,1,1,1
 access_patient_prescription_line,Access Prescription Line,doctors_appointment.model_patient_prescription_line,,1,1,1,1
 
-access_doctor_appointment_user,doctor_appointment_user,model_doctor_appointment,base.group_user,1,1,1,1
 access_appointment_report_wizard,access appointment report wizard,model_appointment_report_wizard,,1,1,1,1
