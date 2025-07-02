@@ -161,6 +161,7 @@ class Registration(models.Model):
                 'doctors_id': res.doctor.id if res.doctor else False,
                 'appointment_date': fields.Datetime.now(),
                 'appointment_type': 'checkup',
+                'is_reserved': 'true',
             })
 
         return res
