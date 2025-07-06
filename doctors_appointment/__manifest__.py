@@ -15,10 +15,12 @@
 
         'wizard/patient_wiz.xml',
         'wizard/appointment_report_wizard.xml',
+        'wizard/doctor_invoices.xml',
 
         'report/doctor_appointment_report.xml',
         "report/patient_prescription_template.xml",
         "report/patient_prescription_view.xml",
+        "report/doctor_invoices.xml",
 
     ]
 }

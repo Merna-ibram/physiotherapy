@@ -5,6 +5,7 @@ from datetime import date
 from dateutil.relativedelta import relativedelta
 
 from odoo.osv import expression
+from odoo.tools import frozendict
 
 
 class AccountMove(models.Model):
@@ -21,6 +22,18 @@ class AccountMove(models.Model):
     mobile = fields.Char(related='partner_id.mobile', string="Mobile", store=True)
 
     invoice_created_months = fields.Integer(string="Created Invoices Count", default=0)
+    agents_name_invoice = fields.Many2many(
+        'res.partner',
+        compute='_compute_agents_from_invoice_partner_move',
+        string='Agent',
+        store=True
+    )
+    agents_name = fields.One2many(
+        'res.partner',
+        compute='_compute_agents_from_invoice_partner_move',
+        string='Agent',
+
+    )
     # doctor_user_id = fields.Many2one('res.users', compute='_compute_doctor_user_id', store=True)
     #
     # @api.depends('partner_id.doctor.user_id')
@@ -38,19 +51,26 @@ class AccountMove(models.Model):
     # def _search_search_mobile(self, operator, value):
     #     return [('partner_id.mobile', operator, value)]
 
-
-    @api.depends('date', 'months')
-    def _compute_end_date(self):
-        for record in self:
-            if record.date and record.months:
-                record.end_date = record.date + relativedelta(months=record.months)
+    @api.depends('partner_id')
+    def _compute_agents_from_invoice_partner_move(self):
+        for line in self:
+            partner = line.partner_id
+            if  partner:
+                line.agents_name_invoice = partner.agent_ids
             else:
-                record.end_date = False
+                line.agents_name_invoice = False
+    # @api.depends('date', 'months')
+    # def _compute_end_date(self):
+    #     for record in self:
+    #         if record.date and record.months:
+    #             record.end_date = record.date + relativedelta(months=record.months)
+    #         else:
+    #             record.end_date = False
 
     @api.model
     def create(self, vals):
-        if vals.get('start_date') and not vals.get('invoice_date'):
-            vals['invoice_date'] = vals['start_date']
+        if   not vals.get('invoice_date'):
+            vals['invoice_date'] = fields.Date.today()
         return super(AccountMove, self).create(vals)
 
     def create_subscription_invoices(self):
@@ -208,4 +228,73 @@ class AccountMoveLine(models.Model):
             if partner and partner.national_address:
                 vals['tax_ids'] = [(5, 0, 0)]
         return super().write(vals)
+
+    @api.depends('tax_ids', 'currency_id', 'partner_id', 'analytic_distribution', 'balance', 'partner_id',
+                 'move_id.partner_id', 'price_unit', 'quantity')
+    def _compute_all_tax(self):
+        for line in self:
+            sign = line.move_id.direction_sign
+
+            if not line.tax_ids:
+                line.compute_all_tax = {}
+                line.compute_all_tax_dirty = False
+                continue
+
+            if line.display_type == 'tax':
+                line.compute_all_tax = {}
+                line.compute_all_tax_dirty = False
+                continue
+
+            if line.display_type == 'product' and line.move_id.is_invoice(True):
+                amount_currency = sign * line.price_unit * (1 - line.discount / 100)
+                handle_price_include = True
+                quantity = line.quantity
+            else:
+                amount_currency = line.amount_currency
+                handle_price_include = False
+                quantity = 1
+
+            compute_all_currency = line.tax_ids.compute_all(
+                amount_currency,
+                currency=line.currency_id,
+                quantity=quantity,
+                product=line.product_id,
+                partner=line.move_id.partner_id or line.partner_id,
+                is_refund=line.is_refund,
+                handle_price_include=handle_price_include,
+                include_caba_tags=line.move_id.always_tax_exigible,
+                fixed_multiplicator=sign,
+            )
+
+            rate = line.amount_currency / line.balance if line.balance else 1
+            line.compute_all_tax_dirty = True
+            line.compute_all_tax = {
+                frozendict({
+                    'tax_repartition_line_id': tax['tax_repartition_line_id'],
+                    'group_tax_id': tax['group'] and tax['group'].id or False,
+                    'account_id': tax['account_id'] or line.account_id.id,
+                    'currency_id': line.currency_id.id,
+                    'analytic_distribution': (tax['analytic'] or not tax[
+                        'use_in_tax_closing']) and line.analytic_distribution,
+                    'tax_ids': [(6, 0, tax['tax_ids'])],
+                    'tax_tag_ids': [(6, 0, tax['tag_ids'])],
+                    'partner_id': line.move_id.partner_id.id or line.partner_id.id,
+                    'move_id': line.move_id.id,
+                    'display_type': line.display_type,
+                }): {
+                    'name': tax['name'] + (' ' + _('(Discount)') if line.display_type == 'epd' else ''),
+                    'balance': tax['amount'] / rate,
+                    'amount_currency': tax['amount'],
+                    'tax_base_amount': tax['base'] / rate * (-1 if line.tax_tag_invert else 1),
+                }
+                for tax in compute_all_currency['taxes']
+                if tax['amount']
+            }
+
+            if not line.tax_repartition_line_id:
+                line.compute_all_tax[frozendict({'id': line.id})] = {
+                    'tax_tag_ids': [(6, 0, compute_all_currency['base_tags'])],
+                }
+
+
 

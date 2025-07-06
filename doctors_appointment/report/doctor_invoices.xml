@@ -1,0 +1,94 @@
+<odoo>
+    <data>
+
+        <!-- Report Action -->
+        <record model="ir.actions.report" id="report_doctor_invoices_action">
+            <field name="name">تقرير المواعيد اليومية</field>
+            <field name="model">doctor.report.wizard</field>
+            <field name="report_type">qweb-pdf</field>
+            <field name="print_report_name">'تقرير - %s' % (object.doctors_id.name)</field>
+            <field name="binding_type">report</field>
+            <field name="report_name">doctors_appointment.report_doctor_invoices_template</field>
+            <field name="report_file">doctors_appointment.report_doctor_invoices_template</field>
+        </record>
+
+        <!-- QWeb Template -->
+ <template id="report_doctor_invoices_template">
+            <t t-call="web.html_container">
+                <t t-call="web.external_layout">
+                    <div class="page">
+
+                        <h2 style="text-align:center;">
+                            🩺 تقرير فواتير الشهريه للدكتور: <t t-esc="data['doctor_name']"/>
+                        </h2>
+                        <p style="text-align:center;">
+                            📅 الشهر: <t t-esc="data['selected_month']"/>
+                        </p>
+
+                        <t t-if="data['has_data']">
+                            <table class="table table-sm table-bordered" style="width:100%; margin-top: 20px;">
+                                <thead style="background-color: #f8f9fa;">
+                                    <tr>
+                                        <th style="text-align: center; padding: 10px;">إجمالى الشهر</th>
+                                        <th style="text-align: center; padding: 10px;">عدد الفواتير</th>
+                                        <th style="text-align: center; padding: 10px;">العمولة</th>
+                                        <th style="text-align: center; padding: 10px;">المرتب</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td style="text-align: center; padding: 10px; font-weight: bold;">
+                                            <t t-esc="'{:,.2f}'.format(data['total_amount'])"/> جنيه
+                                        </td>
+                                        <td style="text-align: center; padding: 10px; font-weight: bold;">
+                                            <t t-esc="data['invoices_count']"/> فاتورة
+                                        </td>
+                                        <td style="text-align: center; padding: 10px; font-weight: bold;">
+                                            <t t-esc="'{:,.2f}'.format(data['total_commission'])"/> جنيه
+                                        </td>
+                                        <td style="text-align: center; padding: 10px; font-weight: bold;">
+                                            <t t-esc="'{:,.2f}'.format(data['doctor_salary'])"/> جنيه
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+
+                            <!-- Summary Section -->
+                            <div style="margin-top: 30px; padding: 20px; background-color: #f8f9fa; border-radius: 8px;">
+                                <h3 style="text-align: center; margin-bottom: 20px;">📊 ملخص الشهر</h3>
+                                <div style="display: flex; justify-content: space-around; text-align: center;">
+                                    <div>
+                                        <h4>💰 إجمالي المبيعات</h4>
+                                        <p style="font-size: 18px; color: #28a745; font-weight: bold;">
+                                            <t t-esc="'{:,.2f}'.format(data['total_amount'])"/> جنيه
+                                        </p>
+                                    </div>
+                                    <div>
+                                        <h4>🏆 إجمالي العمولة</h4>
+                                        <p style="font-size: 18px; color: #007bff; font-weight: bold;">
+                                            <t t-esc="'{:,.2f}'.format(data['total_commission'])"/> جنيه
+                                        </p>
+                                    </div>
+                                    <div>
+                                        <h4>💼 المرتب الأساسي</h4>
+                                        <p style="font-size: 18px; color: #6c757d; font-weight: bold;">
+                                            <t t-esc="'{:,.2f}'.format(data['doctor_salary'])"/> جنيه
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </t>
+
+                        <t t-if="not data['has_data']">
+                            <div style="text-align:center; margin-top: 50px;">
+                                <h3>❌ لا توجد فواتير في هذا الشهر</h3>
+                                <p>لم يتم العثور على أي فواتير للدكتور في الشهر المحدد.</p>
+                            </div>
+                        </t>
+
+                    </div>
+                </t>
+            </t>
+        </template>
+    </data>
+</odoo>

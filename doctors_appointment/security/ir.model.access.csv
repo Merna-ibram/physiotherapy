@@ -6,3 +6,4 @@ access_patient_prescription_wizard,Access Prescription Wizard,doctors_appointmen
 access_patient_prescription_line,Access Prescription Line,doctors_appointment.model_patient_prescription_line,,1,1,1,1
 
 access_appointment_report_wizard,access appointment report wizard,model_appointment_report_wizard,,1,1,1,1
+access_doctor_report_wizard,access doctor report wizard,model_doctor_report_wizard,,1,1,1,1

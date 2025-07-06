@@ -70,18 +70,22 @@
                 <field name="settlement_id" invisible="1" />
                 <field name="commission_free" invisible="1" />
                 <field name="any_settled" invisible="1" />
-                <button
-                    name="button_edit_agents"
-                    title="Edit agents"
-                    icon="fa-users"
-                    invisible="(commission_free == True) or (any_settled == True)"
-                    column_invisible="(parent.move_type not in ('out_invoice', 'out_refund'))"
-                    type="object"
-                />
-                <field
-                    name="commission_status"
-                    column_invisible="(parent.move_type not in ('out_invoice', 'out_refund'))"
-                />
+                                 <field name="agents" widget="many2many_tags"/>
+
+
+
+<!--                <button-->
+<!--                    name="button_edit_agents"-->
+<!--                    title="Edit agents"-->
+<!--                    icon="fa-users"-->
+<!--                    invisible="(commission_free == True) or (any_settled == True)"-->
+<!--                    column_invisible="(parent.move_type not in ('out_invoice', 'out_refund'))"-->
+<!--                    type="object"-->
+<!--                />-->
+<!--                <field-->
+<!--                    name="commission_status"-->
+<!--                    column_invisible="(parent.move_type not in ('out_invoice', 'out_refund'))"-->
+<!--                />-->
             </xpath>
             <xpath expr="//field[@name='invoice_line_ids']" position="after">
                 <button
