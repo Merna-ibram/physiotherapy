@@ -4,7 +4,7 @@
     <!-- Module Category -->
     <record id="module_doctors_appointment" model="ir.module.category">
         <field name="name">Doctor Appointment</field>
-        <field name="description">Doctor Appointment Category</field>
+        <field name="description">Cases Appointment Category</field>
     </record>
 
     <!-- User Groups -->

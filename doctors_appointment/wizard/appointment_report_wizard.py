@@ -7,7 +7,7 @@ class AppointmentReportWizard(models.TransientModel):
     _name = 'appointment.report.wizard'
     _description = 'Doctor Monthly Appointment Report Wizard'
 
-    doctors_id = fields.Many2one('res.partner', string="الدكتور", required=True)
+    doctors_id = fields.Many2one('hr.employee', string="الدكتور", required=True)
     month = fields.Selection(
         [(str(i), calendar.month_name[i]) for i in range(1, 13)],
         string="الشهر",
@@ -25,6 +25,8 @@ class AppointmentReportWizard(models.TransientModel):
         start_date = datetime(year, month, 1)
         last_day = calendar.monthrange(year, month)[1]
         end_date = datetime(year, month, last_day, 23, 59, 59)
+        print('start_date',start_date)
+        print('end_date',end_date)
 
         # البحث عن المواعيد
         appointments = self.env['patient.appointment'].search([
@@ -33,6 +35,8 @@ class AppointmentReportWizard(models.TransientModel):
             ('appointment_date', '<=', end_date),
             ('is_reserved', '=', True),
         ])
+
+        print('appointments',appointments)
 
         # إعداد البيانات للتقرير
         data = {
