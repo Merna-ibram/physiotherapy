@@ -7,7 +7,7 @@ class PatientAppointment(models.Model):
 
 
     patient_id = fields.Many2one('res.partner', string="Patient")
-    doctors_id = fields.Many2one('hr.employee', string="الاخصائي",related='patient_id.doctor', store=True)
+    doctors_id = fields.Many2one('hr.employee', string="الاخصائي")
     appointment_date = fields.Datetime(string="Appointment Date")
     appointment_type = fields.Selection([('checkup', 'Checkup'),('treatment', 'Treatment'),('consultation', 'Consultation')],string='Appointment Type')
     observation = fields.Text(string="Observation")
@@ -19,6 +19,13 @@ class PatientAppointment(models.Model):
     is_reserved = fields.Boolean(string="محجوز؟", default=False)
 
     is_this_week = fields.Boolean(string="هذا الأسبوع", compute='_compute_is_this_week', store=False)
+
+    @api.onchange('patient_id')
+    def _onchange_patient_id(self):
+        if self.patient_id and self.patient_id.doctor:
+            self.doctors_id = self.patient_id.doctor
+        else:
+            self.doctors_id = False
 
     @api.depends('appointment_date')
     def _compute_is_this_week(self):
@@ -64,6 +71,21 @@ class PatientAppointment(models.Model):
             domain, field_names, offset=offset, limit=limit, order=order
         )
 
+    def write(self, vals):
+        for rec in self:
+            # لو تم تغيير الدكتور
+            if 'doctors_id' in vals and vals['doctors_id'] != rec.doctors_id.id:
+                # ناخد نسخة من البيانات الحالية
+                new_vals = rec.copy_data()[0]
+                # نحدث الدكتور في النسخة
+                new_vals['doctors_id'] = vals['doctors_id']
+                # نعمل سجل جديد
+                self.env['patient.appointment'].create(new_vals)
+                return True  # نرجّع بدون تعديل السطر الأصلي
+
+        return super(PatientAppointment, self).write(vals)
+
+
 class PatientPharmacyLines(models.Model):
     _name = "patient.pharmacy.lines"
     _description = "Patient Pharmacy Lines"
@@ -97,6 +119,7 @@ class PatientPharmacyLines(models.Model):
 
             }
         }
+
 
     def action_remove_from_prescription(self):
         prescription_lines = self.env['patient.prescription.line'].search([
