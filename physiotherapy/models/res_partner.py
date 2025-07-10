@@ -166,6 +166,36 @@ class Registration(models.Model):
 
         return res
 
+    def write(self, vals):
+        for rec in self:
+            old_doctor = rec.doctor
+            res = super(Registration, rec).write(vals)
+            new_doctor = rec.doctor
+
+            # إذا تم تغيير الدكتور فعليًا وكان المريض
+            if rec.is_patient and 'doctor' in vals and old_doctor != new_doctor:
+                # إضافة سطر جديد في my.cases
+                self.env['my.cases'].create({
+                    'patient_id': rec.id,
+                    'doctor': new_doctor.id
+                })
+
+                # إضافة سطر جديد في patient.appointment بناءً على آخر موعد
+                last_appointment = self.env['patient.appointment'].search(
+                    [('patient_id', '=', rec.id)],
+                    order='appointment_date desc',
+                    limit=1
+                )
+
+                if last_appointment:
+                    # ننسخ بيانات الموعد
+                    new_vals = last_appointment.copy_data()[0]
+                    new_vals['doctors_id'] = new_doctor.id
+                    new_vals['appointment_date'] = fields.Datetime.now()
+                    self.env['patient.appointment'].create(new_vals)
+
+        return res
+
     @api.depends('birth_date')
     def _compute_age(self):
         for rec in self:
