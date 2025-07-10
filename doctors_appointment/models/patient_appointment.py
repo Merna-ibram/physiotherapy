@@ -7,24 +7,24 @@ class PatientAppointment(models.Model):
 
 
     patient_id = fields.Many2one('res.partner', string="Patient")
-    doctors_id = fields.Many2one('hr.employee', string="Ø§Ù„Ø§Ø®ØµØ§Ø¦ÙŠ",related='patient_id.doctor', store=True)
+    doctors_id = fields.Many2one('hr.employee', string="الاخصائي",related='patient_id.doctor', store=True)
     appointment_date = fields.Datetime(string="Appointment Date")
     appointment_type = fields.Selection([('checkup', 'Checkup'),('treatment', 'Treatment'),('consultation', 'Consultation')],string='Appointment Type')
     observation = fields.Text(string="Observation")
     pharmacy_line_ids = fields.One2many('patient.pharmacy.lines', 'appointment_id', string='Pharmacy Lines')
     patient_prescription_line_ids = fields.One2many('patient.prescription.line','prescription_id',string='Prescription Lines')
     total_amount = fields.Float(string="Total Amount", compute="_compute_total_amount", store=True)
-    done = fields.Boolean(string="ØªÙ…", default=False)
-    notes = fields.Text(string="Ù…Ù„Ø§Ø­Ø¸Ø§Øª")
-    is_reserved = fields.Boolean(string="Ù…Ø­Ø¬ÙˆØ²ØŸ", default=False)
+    done = fields.Boolean(string="تم", default=False)
+    notes = fields.Text(string="ملاحظات")
+    is_reserved = fields.Boolean(string="محجوز؟", default=False)
 
-    is_this_week = fields.Boolean(string="Ù‡Ø°Ø§ Ø§Ù„Ø£Ø³Ø¨ÙˆØ¹", compute='_compute_is_this_week', store=False)
+    is_this_week = fields.Boolean(string="هذا الأسبوع", compute='_compute_is_this_week', store=False)
 
     @api.depends('appointment_date')
     def _compute_is_this_week(self):
         today = fields.Date.context_today(self)
-        start_of_week = today - timedelta(days=today.weekday())  # ÙŠÙˆÙ… Ø§Ù„Ø§Ø«Ù†ÙŠÙ†
-        end_of_week = start_of_week + timedelta(days=6)  # Ø§Ù„Ø£Ø­Ø¯
+        start_of_week = today - timedelta(days=today.weekday())  # يوم الاثنين
+        end_of_week = start_of_week + timedelta(days=6)  # الأحد
 
         for rec in self:
             if rec.appointment_date:
@@ -57,8 +57,8 @@ class PatientAppointment(models.Model):
         if user.has_group('doctors_appointment.group_doctors_appointment_doctor'):
             domain = expression.AND([
                 domain,
-                [('partner_id.doctor.user_id', '=', user.id)]
-            ])
+                [('doctors_id.user_id', '=', user.id)]])
+
 
         return super(PatientAppointment, self).search_fetch(
             domain, field_names, offset=offset, limit=limit, order=order

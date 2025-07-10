@@ -24,9 +24,7 @@ class AccountMove(models.Model):
     invoice_created_months = fields.Integer(string="Created Invoices Count", default=0)
     agents_name_invoice = fields.Many2many(
         'res.partner',
-        compute='_compute_agents_from_invoice_partner_move',
-        string='Agent',
-        store=True
+        string='Agent',readonly=1
     )
     agents_name = fields.One2many(
         'res.partner',
@@ -51,14 +49,14 @@ class AccountMove(models.Model):
     # def _search_search_mobile(self, operator, value):
     #     return [('partner_id.mobile', operator, value)]
 
-    @api.depends('partner_id')
-    def _compute_agents_from_invoice_partner_move(self):
-        for line in self:
-            partner = line.partner_id
-            if  partner:
-                line.agents_name_invoice = partner.agent_ids
-            else:
-                line.agents_name_invoice = False
+    # @api.depends('partner_id')
+    # def _compute_agents_from_invoice_partner_move(self):
+    #     for line in self:
+    #         partner = line.partner_id
+    #         if  partner:
+    #             line.agents_name_invoice = partner.agent_ids
+    #         else:
+    #             line.agents_name_invoice = False
     # @api.depends('date', 'months')
     # def _compute_end_date(self):
     #     for record in self:
@@ -71,6 +69,7 @@ class AccountMove(models.Model):
     def create(self, vals):
         if   not vals.get('invoice_date'):
             vals['invoice_date'] = fields.Date.today()
+            vals['agents_name_invoice']=vals.get('invoice_line_ids.agents')
         return super(AccountMove, self).create(vals)
 
     def create_subscription_invoices(self):
@@ -208,6 +207,15 @@ class AccountMove(models.Model):
         return super(AccountMove, self).search_fetch(
             domain, field_names, offset=offset, limit=limit, order=order
         )
+
+
+    def action_post(self):
+
+        for rec in self:
+            rec.agents_name_invoice=rec.invoice_line_ids.agents
+        return super(AccountMove,self).action_post()
+
+
 
 
 class AccountMoveLine(models.Model):

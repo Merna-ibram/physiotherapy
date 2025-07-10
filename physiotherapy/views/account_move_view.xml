@@ -14,7 +14,7 @@
                        <field name="age"/>
                        <field name="gender"/>
                        <field name="mobile"/>
-                       <field name="agents_name_invoice" invisible="1"/>
+                       <field name="agents_name_invoice" widget="many2many_tags"/>
                    </group>
                </xpath>
 

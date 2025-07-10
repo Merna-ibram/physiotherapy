@@ -7,7 +7,7 @@ class AppointmentReportWizard(models.TransientModel):
     _name = 'appointment.report.wizard'
     _description = 'Doctor Monthly Appointment Report Wizard'
 
-    doctors_id = fields.Many2one('hr.employee', string="الدكتور", required=True)
+    doctors_id = fields.Many2one('res.partner', string="الدكتور", required=True)
     month = fields.Selection(
         [(str(i), calendar.month_name[i]) for i in range(1, 13)],
         string="الشهر",
