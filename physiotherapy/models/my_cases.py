@@ -27,3 +27,17 @@ class MyCases(models.Model):
                 return True
         # لو مفيش تغيير في الدكتور، نكمل الكتابة العادية
         return super(MyCases, self).write(vals)
+
+    @api.model
+    def search_fetch(self, domain, field_names, offset=0, limit=None, order=None):
+        user = self.env.user
+
+        if user.has_group('doctors_appointment.group_doctors_appointment_doctor'):
+            domain = expression.AND([
+                domain,
+                [('doctor.user_id', '=', user.id)]
+            ])
+
+        return super(MyCases, self).search_fetch(domain, field_names, offset=offset, limit=limit, order=order)
+
+

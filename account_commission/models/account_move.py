@@ -125,6 +125,9 @@ class AccountMove(models.Model):
     def create(self, vals):
         move = super().create(vals)
         print('Invoice created')
+        agents = move.invoice_line_ids.mapped('agents')
+        if agents:
+            move.agents_name_invoice = [(6, 0, agents.ids)]
 
         if move.move_type == "out_invoice" and move.partner_id:
             partner = move.partner_id
@@ -139,6 +142,9 @@ class AccountMove(models.Model):
                     ('agent_ids', 'in', agent.id)
                 ])
 
+                print(move.agents_name_invoice)
+
+
                 # Make sure the current partner is included in customers
                 if partner.id not in customers.ids:
                     customers |= partner
@@ -146,7 +152,7 @@ class AccountMove(models.Model):
                 # Get all posted invoices for these customers including the newly created one
                 invoices = self.env['account.move'].search([
                     ('move_type', '=', 'out_invoice'),
-                    ('partner_id', 'in', customers.ids),
+                    ('agents_name_invoice', 'in', move.agents_name_invoice.ids),
                     ('state', 'in', ['posted']),
                     ('invoice_date', '!=', False),
                 ]) | move  # Include the current invoice if not posted yet
@@ -172,7 +178,8 @@ class AccountMove(models.Model):
                 current_month_name = invoice_date.strftime('%B')
                 current_invoice_total = move.amount_total
                 monthly_invoice_total = monthly_totals.get(current_month_name, 0.0)
-                salary_threshold = agent.salary * 2
+                salary_threshold = move.agents_name_invoice.salary * 2
+                print('salary_threshold',salary_threshold)
 
                 # Display monthly totals for debugging
                 for month in ordered_months:
@@ -243,10 +250,11 @@ class AccountMove(models.Model):
                         # Get all posted invoices for these customers including the current one
                         invoices = self.env['account.move'].search([
                             ('move_type', '=', 'out_invoice'),
-                            ('partner_id', 'in', customers.ids),
+                            ('agents_name_invoice', 'in', move.agents_name_invoice.ids),
                             ('state', 'in', ['posted']),
                             ('invoice_date', '!=', False),
                         ])
+                        print(invoices)
 
                         # Make sure current invoice is included
                         if move.id not in invoices.ids:
@@ -276,7 +284,7 @@ class AccountMove(models.Model):
                         current_month_name = invoice_date.strftime('%B')
                         current_invoice_total = move.amount_total
                         monthly_invoice_total = monthly_totals.get(current_month_name, 0.0)
-                        salary_threshold = agent.salary * 2 if agent.salary else 0
+                        salary_threshold = move.agents_name_invoice.salary * 2 if move.agents_name_invoice.salary else 0
 
                         # Display monthly totals for debugging
                         for month in ordered_months:

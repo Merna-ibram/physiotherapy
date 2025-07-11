@@ -1,6 +1,21 @@
 <odoo>
     <data>
 
+                <record id="view_account_list_inherit_medical" model="ir.ui.view">
+            <field name="name">account.move.form.medical.inherit</field>
+            <field name="model">account.move</field>
+            <field name="inherit_id" ref="account.view_out_invoice_tree"/>
+            <field name="arch" type="xml">
+
+               <xpath expr="//field[@name='mobile']" position="after">
+                    <field name="agents_name_invoice" widget="many2many_tags"/>
+                    <field name="commission_total"/>
+               </xpath>
+
+            </field>
+        </record>
+
+
         <!-- تعديل فورم الفاتورة -->
         <record id="view_account_form_inherit_medical" model="ir.ui.view">
             <field name="name">account.move.form.medical.inherit</field>
@@ -66,6 +81,7 @@
             <field name="arch" type="xml">
                 <xpath expr="//search" position="inside">
                     <field name="mobile"/>
+                    <field name="agents_name_invoice"/>
 <!--                    <filter string="Mobile" name="filter_mobile" domain="[('partner_id.mobile', 'ilike', self)]"/>-->
                 </xpath>
             </field>
