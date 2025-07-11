@@ -39,5 +39,3 @@ class MyCases(models.Model):
             ])
 
         return super(MyCases, self).search_fetch(domain, field_names, offset=offset, limit=limit, order=order)
-
-
