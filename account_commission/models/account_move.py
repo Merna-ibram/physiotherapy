@@ -16,7 +16,7 @@ class AccountMove(models.Model):
         for rec in self:
             rec.new_customer = rec.partner_id.new_customer
     commission_total = fields.Float(
-        string="Commissions",
+        string="Commissions",readonly=1
     )
     partner_agent_ids = fields.Many2many(
         string="Agents",
