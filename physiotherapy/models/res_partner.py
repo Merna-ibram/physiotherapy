@@ -188,6 +188,53 @@ class Registration(models.Model):
 
         return res
 
+    def write(self, vals):
+        for rec in self:
+            old_doctor = rec.doctor
+            res = super(Registration, rec).write(vals)
+            new_doctor = rec.doctor
+
+            # إذا تم تغيير الدكتور فعليًا وكان المريض
+            if rec.is_patient and 'doctor' in vals and old_doctor != new_doctor:
+                # 1. سجل جديد في my.cases
+                self.env['my.cases'].create({
+                    'patient_id': rec.id,
+                    'doctor': new_doctor.id
+                })
+
+                # 2. إنشاء موعد جديد بناءً على آخر موعد
+                last_appointment = self.env['patient.appointment'].search(
+                    [('patient_id', '=', rec.id)],
+                    order='appointment_date desc',
+                    limit=1
+                )
+                if last_appointment:
+                    appointment_vals = last_appointment.copy_data()[0]
+                    appointment_vals.update({
+                        'doctors_id': new_doctor.id,
+                        'appointment_date': fields.Datetime.now(),
+                        'appointment_type': 'checkup',
+                        'is_reserved': True,
+                    })
+                    self.env['patient.appointment'].create(appointment_vals)
+
+                # 3. إنشاء فاتورة جديدة بناءً على آخر فاتورة
+                last_invoice = self.env['account.move'].search([
+                    ('partner_id', '=', rec.id),
+                    ('move_type', '=', 'out_invoice'),
+                    ('state', '!=', 'cancel')
+                ], order='invoice_date desc', limit=1)
+                if last_invoice:
+                    invoice_vals = last_invoice.copy_data()[0]
+                    invoice_vals.update({
+                        'doctor': new_doctor.id,
+                        'invoice_date': fields.Date.today(),
+                        'start_date': fields.Date.today(),
+                    })
+                    self.env['account.move'].create(invoice_vals)
+
+        return res
+
     @api.depends('birth_date')
     def _compute_age(self):
         for rec in self:
