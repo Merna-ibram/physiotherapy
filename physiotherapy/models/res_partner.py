@@ -124,6 +124,27 @@ class Registration(models.Model):
     #     ('unique_name', 'unique("name")', 'This name already exists! Please try another one.')
     # ]
 
+    agent_ids = fields.Many2many(
+        comodel_name="res.partner",
+        relation="partner_agent_rel",
+        column1="partner_id",
+        column2="agent_id",
+        readonly=False,
+        string="Agents",
+        compute='_get_agents',
+        store=True
+    )
+
+    @api.depends('doctor')
+    def _get_agents(self):
+        for rec in self:
+
+            partner=self.env['res.partner'].search([('name','=',rec.doctor.name)])
+            if partner:
+               rec.agent_ids = [(6, 0, partner.ids)]
+            else:
+                rec.agent_ids=[(5,0,0,[])]
+
     @api.onchange('nationality_id')
     def _onchange_nationality(self):
         if self.nationality_id:

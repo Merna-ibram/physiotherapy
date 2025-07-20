@@ -8,9 +8,10 @@
         <field name="priority" eval="18"/>
         <field name="arch" type="xml">
     <field name="vat" position="after">
+        <label for="agent" string="Is a Agent"/>
         <field name="agent" string="Agent"/>
         <field name="res_partner_search_mode" string="Partner search" invisible="1"/>
-        <field name="new_customer" string="New Customer" invisible="res_partner_search_mode == 'supplier'"/>
+<!--        <field name="new_customer" string="New Customer" invisible="res_partner_search_mode == 'supplier'"/>-->
     </field>
 
     <xpath expr="//page[@name='sales_purchases']//field[@name='user_id']" position="after">

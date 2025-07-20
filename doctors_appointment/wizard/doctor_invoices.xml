@@ -5,7 +5,7 @@
         <field name="arch" type="xml">
             <form string="تقرير الفواتير الشهريه">
                 <group>
-                    <field name="doctors_id"/>
+<!--                    <field name="doctors_id"/>-->
                     <field name="month"/>
                     <field name="year"/>
                 </group>
@@ -25,7 +25,7 @@
     </record>
 
     <menuitem id="menu_doctor_invoice_report"
-              name="الفواتير الشهرىة للدكتور"
+              name="الفواتير الشهرىة للدكاترة"
               parent="account.menu_finance"
               action="action_doctor_invoice_wizard"
               sequence="40"/>
