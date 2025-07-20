@@ -106,7 +106,6 @@ class Registration(models.Model):
     muscle_test = fields.Text(string="Manual Muscle Test")
     special_test = fields.Text(string="Special Test")
 
-
     @api.constrains('is_patient', 'doctor')
     def _check_required_fields_for_patient(self):
         for rec in self:
@@ -175,6 +174,7 @@ class Registration(models.Model):
         if vals.get('is_patient'):
             self.env['my.cases'].create({
                 'patient_id': res.id,
+                'doctor': res.doctor.id,
             })
 
         if vals.get('is_patient'):
