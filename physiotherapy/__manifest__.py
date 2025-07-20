@@ -14,7 +14,7 @@
 
 
     'depends': [
-        'base','account','account_commission'
+        'base','account',
     ],
 
     'data': [
