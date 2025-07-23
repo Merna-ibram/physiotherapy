@@ -57,7 +57,7 @@ class AppointmentReportWizard(models.TransientModel):
 
             # حساب الإحصائيات لهذا الطبيب
             agent_total_amount = sum(agent_invoices.mapped('amount_total'))
-            agent_total_commission = sum(agent_invoices.mapped('commission_total'))
+            agent_total_commission = sum(agent_invoices.mapped('amount_total'))*0.05
             agent_invoices_count = len(agent_invoices)
             agent_salary = agent.salary if hasattr(agent, 'salary') else 0
 

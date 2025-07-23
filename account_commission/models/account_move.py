@@ -212,7 +212,7 @@ class AccountMove(models.Model):
                         print(f"   Monthly total ({monthly_invoice_total:.2f}) >= Threshold ({salary_threshold:.2f})")
 
                     # Check if current invoice alone >= salary * 2
-                    if current_invoice_total == salary_threshold:
+                    if current_invoice_total == salary_threshold and monthly_invoice_total < salary_threshold :
                         move.commission_total = salary_threshold * 0.05
                         commission_calculated = True
                         print(f"? Commission triggered by single invoice: {move.commission_total:.2f}")
