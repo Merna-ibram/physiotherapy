@@ -35,6 +35,7 @@
         'views/my_cases_views.xml',
         'views/hr_employee_view.xml',
 
+
         # Wizards
 
 

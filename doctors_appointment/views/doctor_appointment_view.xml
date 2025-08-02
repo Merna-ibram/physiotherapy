@@ -13,7 +13,10 @@
     <menuitem id="menu_doctor"
               name="Doctor"
               parent="menu_doctors_appointment"
-              action="action_doctor_appointment" sequence="12"/>
+              action="action_doctor_appointment"
+              sequence="12"
+              groups="group_doctors_appointment_administrator,group_doctors_appointment_doctor"/>
+
 
 
     <!-- Tree View -->

@@ -95,4 +95,13 @@
         parent="menu_patient_id"
         action="action_patient_appointment"
         sequence="10" />
+
+    <menuitem id="menu_patient_appointments"
+        name="Patient Appointments"
+        parent="menu_patient_id"
+        action="action_patient_appointment"
+        groups="group_doctors_appointment_administrator,group_doctors_appointment_doctor"/>
+
+
+
 </odoo>

@@ -23,6 +23,21 @@
         <field name="category_id" ref="physiotherapy.module_doctors_appointment"/>
     </record>
 
+    <record id="module_contact_access" model="ir.module.category">
+        <field name="name">Contact</field>
+        <field name="description">Access groups for managing patient contact and registration.</field>
+    </record>
+    <!-- Recption Group -->
+    <record id="group_contact_recption" model="res.groups">
+        <field name="name">Recption</field>
+        <field name="category_id" ref="physiotherapy.module_contact_access"/>
+    </record>
+    <!-- Doctor Group -->
+    <record id="group_contact_doctor" model="res.groups">
+        <field name="name">Doctor</field>
+        <field name="category_id" ref="physiotherapy.module_contact_access"/>
+    </record>
+
 <!--    <data noupdate="1">-->
 
 <!--        &lt;!&ndash; Doctor: يشوف الحالات بتاعته فقط &ndash;&gt;-->

@@ -28,5 +28,7 @@
               name="تقريري الشهري"
               parent="menu_doctors_appointment"
               action="action_appointment_report_wizard"
-              sequence="15"/>
+              sequence="15"
+            groups="group_doctors_appointment_administrator,group_doctors_appointment_doctor"/>
+
 </odoo>

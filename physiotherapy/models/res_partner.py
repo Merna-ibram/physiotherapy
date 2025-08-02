@@ -12,17 +12,15 @@ class Registration(models.Model):
     code = fields.Char(default='new', readonly=1, string="Code")
     birth_date = fields.Date(string="تاريخ الميلاد", required=True)
     age = fields.Integer(string="العمر", compute="_compute_age", store=True)
-    gender = fields.Selection([('m', 'Male'), ('f', 'Female')], string="Gender",required=True)
-
+    gender = fields.Selection([('m', 'Male'), ('f', 'Female')], string="Gender", required=True)
 
     nationality_id = fields.Many2one('res.country', string="الجنسية", required=True)
     state_code = fields.Char(string="كود الدولة")
-    national_address = fields.Text(string= "عنوان وطني")
-    identity_info = fields.Text(string="رقم الهوية", required=True)
+    national_address = fields.Text(string="عنوان وطني")
+    identity_info = fields.Text(string="رقم الهوية")
 
     doctor = fields.Many2one('hr.employee', string='الاخصائي')
-
-    sales_person = fields.Many2one('res.users', string='الاخصائي')
+    sales_person = fields.Many2one('res.users', string='مندوب المبيعات')
 
     diagnosis = fields.Char(string="Diagnosis", tracking=True)
 
@@ -110,19 +108,11 @@ class Registration(models.Model):
     def _check_required_fields_for_patient(self):
         for rec in self:
             if rec.is_patient:
-                # if not rec.diagnosis:
-                #     raise ValidationError("يجب إدخال التشخيص للمريض.")
                 if not rec.doctor:
                     raise ValidationError("يجب تحديد الأخصائي للمريض.")
-    # @api.constrains('age')
-    # def _check_age_greater_zero(self):
-    #     for rec in self:
-    #         if rec.age == 0:
-    #             raise ValidationError('Please enter a valid age greater than 0')
 
-    # _sql_constraints = [
-    #     ('unique_name', 'unique("name")', 'This name already exists! Please try another one.')
-    # ]
+    def _is_reception_staff(self):
+        return self.env.user.has_group('physiotherapy.group_contact_recption')
 
     agent_ids = fields.Many2many(
         comodel_name="res.partner",
@@ -138,12 +128,11 @@ class Registration(models.Model):
     @api.depends('doctor')
     def _get_agents(self):
         for rec in self:
-
-            partner=self.env['res.partner'].search([('name','=',rec.doctor.name)])
+            partner = self.env['res.partner'].search([('name', '=', rec.doctor.name)])
             if partner:
-               rec.agent_ids = [(6, 0, partner.ids)]
+                rec.agent_ids = [(6, 0, partner.ids)]
             else:
-                rec.agent_ids=[(5,0,0,[])]
+                rec.agent_ids = [(5, 0, 0, [])]
 
     @api.onchange('nationality_id')
     def _onchange_nationality(self):
@@ -256,31 +245,28 @@ class Registration(models.Model):
         else:
             self.age = 0
 
-    # @api.multi
-    # def write(self, vals):
-    #     res = super(Registration, self).write(vals)
-    #     if 'sales_person' in vals:
-    #         for partner in self:
-    #             cases = self.env['my.cases'].search([('patient_id', '=', partner.id)])
-    #             cases.write({'sales_person': vals['sales_person']})
-    #     return res
+    @api.model
+    def search_fetch(self, domain, field_names, offset=0, limit=None, order=None):
+        user = self.env.user
 
-    # @api.constrains('is_patient', 'diagnosis')
-    # def _check_diagnosis_required(self):
-    #     for rec in self:
-    #         if rec.is_patient and not rec.diagnosis:
-    #             raise ValidationError("Diagnosis is required for patients.")
-    #
-#
-# class CountryInherit(models.Model):
-#     _inherit = 'res.country'
-#
-#     def name_get(self):
-#         result = []
-#         for record in self:
-#             name = f"[{record.code}] {record.name}" if record.code else record.name
-#             result.append((record.id, name))
-#         return result
+        # If user is reception staff, they can see all patients but limited fields
+        if user.has_group('physiotherapy.module_contact_access'):
+            # Reception staff can see all patients
+            pass
+        elif user.has_group('physiotherapy.group_contact_recption'):
+            # Doctors can only see their own patients
+            domain = expression.AND([
+                domain,
+                ['|',
+                 ('is_patient', '=', False),  # عرض كل السجلات التي ليست مرضى
+                 '&',
+                 ('is_patient', '=', True),  # لكن إذا كانت مريض
+                 ('doctor.user_id', '=', user.id)  # يشترط أن يكون الطبيب المستخدم الحالي
+                 ]
+            ])
+
+        return super(Registration, self).search_fetch(domain, field_names, offset=offset, limit=limit, order=order)
+
 
 class CountryInherit(models.Model):
     _inherit = 'res.country'
@@ -296,7 +282,6 @@ class CountryInherit(models.Model):
 
     @api.model
     def create(self, vals):
-        # Remove 'new' default; instead, use assign_missing_state_codes to fill
         return super(CountryInherit, self).create(vals)
 
     @api.model
@@ -305,7 +290,6 @@ class CountryInherit(models.Model):
         countries = self.search([], order='id')
         for country in countries:
             if not country.state_code or country.state_code == 'new':
-                # Skip if code already used
                 while str(code) in countries.mapped('state_code'):
                     code += 1
                 country.state_code = str(code)

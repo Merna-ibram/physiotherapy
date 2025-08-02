@@ -27,18 +27,18 @@
                        <field name="state_code" placeholder="مثال: 165"/>
                    </group>
                     <group col="4" colspan="4" >
-                        <field name="identity_info" placeholder="مثال: لرقم القومي (في مصر) أو رقم الهوية (في السعوديةً)"/>
-                        <field name="national_address" placeholder="مثال:قم المبنى , اسم الشارع, اسم الحي, المدينة"/>
+                        <field name="identity_info" placeholder="مثال: رقم القومي (في مصر) أو رقم الهوية (في السعودية)"/>
+                        <field name="national_address" placeholder="مثال: رقم المبنى، اسم الشارع، اسم الحي، المدينة"/>
                     </group>
 
-                     <!-- The rest: only shown if is_patient is True -->
-                    <group name="patient_section" invisible="is_patient == False" col="4" colspan="4">
-
+                    <!-- Doctor field - only visible when is_patient is True -->
+                    <group name="doctor_section" col="4" colspan="4" invisible="is_patient == False">
                         <separator string="Patient Info"/>
-                        <group col="4" colspan="4">
-                            <field name="doctor"/>
-                        </group>
+                        <field name="doctor"/>
+                    </group>
 
+                     <!-- The rest: only shown if is_patient is True and NOT for reception users -->
+                    <group name="patient_section" invisible="is_patient == False" col="4" colspan="4">
 
                         <separator string="Diagnosis"/>
                         <group col="4" colspan="4">
@@ -179,7 +179,20 @@
             </field>
         </record>
 
-             <!-- View Inheritance -->
+        <!-- Additional hiding for Reception users via groups attribute -->
+        <record id="view_partner_form_reception_limited" model="ir.ui.view">
+            <field name="name">res.partner.form.reception.limited</field>
+            <field name="model">res.partner</field>
+            <field name="inherit_id" ref="view_partner_form_inherit_medical"/>
+            <field name="arch" type="xml">
+                <!-- Hide all patient details for reception except doctor field when is_patient is True -->
+                <xpath expr="//group[@name='patient_section']" position="attributes">
+                    <attribute name="groups">!physiotherapy.group_contact_recption</attribute>
+                </xpath>
+            </field>
+        </record>
+
+        <!-- Country form view inheritance -->
         <record id="view_country_form_inherit_state_code" model="ir.ui.view">
             <field name="name">res.country.form.inherit.state.code</field>
             <field name="model">res.country</field>

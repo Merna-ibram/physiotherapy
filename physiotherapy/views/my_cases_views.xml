@@ -32,6 +32,14 @@
         <field name="view_mode">tree,form</field>
     </record>
 
+            <!-- Menu Item - مخفي عن الاستقبال -->
+        <menuitem id="menu_my_cases"
+                  name="Cases"
+                  parent="menu_my_cases_root"
+                  action="action_my_cases"
+                  groups="group_doctors_appointment_doctor,group_doctors_appointment_administrator"/>
+
+
 
 
     <menuitem id="menu_my_cases" name="Cases" parent="menu_my_cases_root" action="action_my_cases"/>
