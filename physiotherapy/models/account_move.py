@@ -11,7 +11,7 @@ from odoo.tools import frozendict
 class AccountMove(models.Model):
     _inherit = 'account.move'
 
-    start_date = fields.Date(string="Subscription Start Date", required=True)
+    start_date = fields.Date(string="Subscription Start Date")
     months = fields.Integer(string="Months of Subscription")
     end_date = fields.Date(string="Subscription End Date", compute="_compute_end_date", store=True)
     doctor =  fields.Many2one('hr.employee',  string='الاخصائي', readonly=True)
