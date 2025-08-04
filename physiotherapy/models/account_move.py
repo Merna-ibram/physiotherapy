@@ -13,7 +13,7 @@ class AccountMove(models.Model):
 
     start_date = fields.Date(string="Subscription Start Date")
     months = fields.Integer(string="Months of Subscription")
-    end_date = fields.Date(string="Subscription End Date", compute="_compute_end_date", store=True)
+    end_date = fields.Date(string="Subscription End Date")
     doctor =  fields.Many2one('hr.employee',  string='الاخصائي', readonly=True)
     code = fields.Char(related='partner_id.code', readonly=1, string="Code")
     age = fields.Integer(related='partner_id.age', string="Age")
