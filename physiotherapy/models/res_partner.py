@@ -104,6 +104,13 @@ class Registration(models.Model):
     muscle_test = fields.Text(string="Manual Muscle Test")
     special_test = fields.Text(string="Special Test")
 
+    show_appointment_button = fields.Boolean(compute="_compute_show_appointment_button")
+
+    @api.depends('is_patient')
+    def _compute_show_appointment_button(self):
+        for rec in self:
+            rec.show_appointment_button = rec.is_patient
+
     @api.constrains('is_patient', 'doctor')
     def _check_required_fields_for_patient(self):
         for rec in self:
@@ -166,14 +173,14 @@ class Registration(models.Model):
                 'doctor': res.doctor.id,
             })
 
-        if vals.get('is_patient'):
-            self.env['patient.appointment'].create({
-                'patient_id': res.id,
-                'doctors_id': res.doctor.id if res.doctor else False,
-                'appointment_date': fields.Datetime.now(),
-                'appointment_type': 'checkup',
-                'is_reserved': 'true',
-            })
+        # if vals.get('is_patient'):
+        #     self.env['patient.appointment'].create({
+        #         'patient_id': res.id,
+        #         'doctors_id': res.doctor.id if res.doctor else False,
+        #         'appointment_date': fields.Datetime.now(),
+        #         'appointment_type': 'checkup',
+        #         'is_reserved': 'true',
+        #     })
 
         return res
 
@@ -192,20 +199,20 @@ class Registration(models.Model):
                 })
 
                 # 2. إنشاء موعد جديد بناءً على آخر موعد
-                last_appointment = self.env['patient.appointment'].search(
-                    [('patient_id', '=', rec.id)],
-                    order='appointment_date desc',
-                    limit=1
-                )
-                if last_appointment:
-                    appointment_vals = last_appointment.copy_data()[0]
-                    appointment_vals.update({
-                        'doctors_id': new_doctor.id,
-                        'appointment_date': fields.Datetime.now(),
-                        'appointment_type': 'checkup',
-                        'is_reserved': True,
-                    })
-                    self.env['patient.appointment'].create(appointment_vals)
+                # last_appointment = self.env['patient.appointment'].search(
+                #     [('patient_id', '=', rec.id)],
+                #     order='appointment_date desc',
+                #     limit=1
+                # )
+                # if last_appointment:
+                #     appointment_vals = last_appointment.copy_data()[0]
+                #     appointment_vals.update({
+                #         'doctors_id': new_doctor.id,
+                #         'appointment_date': fields.Datetime.now(),
+                #         'appointment_type': 'checkup',
+                #         'is_reserved': True,
+                #     })
+                #     self.env['patient.appointment'].create(appointment_vals)
 
                 # 3. إنشاء فاتورة جديدة بناءً على آخر فاتورة
                 last_invoice = self.env['account.move'].search([
@@ -267,6 +274,19 @@ class Registration(models.Model):
 
         return super(Registration, self).search_fetch(domain, field_names, offset=offset, limit=limit, order=order)
 
+    def appointment(self):
+        return {
+            'name': 'Doctor Appointment',
+            'type': 'ir.actions.act_window',
+            'res_model': 'patient.appointment',
+            'view_mode': 'form',
+            'target': 'current',
+            'context': {
+                'default_patient_id': self.id,
+                'default_doctors_id': self.doctor.id if self.doctor else False,
+                'default_appointment_type': 'checkup',  # لو فيه نوع افتراضي
+            }
+        }
 
 class CountryInherit(models.Model):
     _inherit = 'res.country'

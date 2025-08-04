@@ -22,6 +22,7 @@
 #     is_reserved = fields.Boolean(string="محجوز؟", default=False)
 
 from datetime import datetime, timedelta
+from odoo.exceptions import ValidationError
 
 from odoo import models, fields, api
 
@@ -58,7 +59,7 @@ class DoctorAppointment(models.Model):
             else:
                 rec.is_this_week = False
 
-    
+
 
 
 
