@@ -2,6 +2,8 @@ from odoo import api, models, fields
 from datetime import datetime, timedelta
 from odoo.osv import expression
 from odoo.exceptions import ValidationError
+from odoo.tools import DEFAULT_SERVER_DATETIME_FORMAT
+from pytz import timezone, UTC
 
 class PatientAppointment(models.Model):
     _name = "patient.appointment"
@@ -78,10 +80,14 @@ class PatientAppointment(models.Model):
 
     @api.constrains('doctors_id', 'appointment_date')
     def _check_doctor_appointment_conflict(self):
+        user_tz = self.env.user.tz or 'UTC'
+        tz = timezone(user_tz)
+
         for rec in self:
             if rec.doctors_id and rec.appointment_date:
-                start_range = rec.appointment_date - timedelta(minutes=30)
-                end_range = rec.appointment_date + timedelta(minutes=30)
+                start_range = rec.appointment_date - timedelta(minutes=29)
+                end_range = rec.appointment_date + timedelta(minutes=29)
+
                 conflict_appointments = self.search([
                     ('id', '!=', rec.id),
                     ('doctors_id', '=', rec.doctors_id.id),
@@ -89,8 +95,13 @@ class PatientAppointment(models.Model):
                     ('appointment_date', '<=', end_range)
                 ])
                 if conflict_appointments:
-                    raise ValidationError("لا يمكن حجز ميعاد لنفس الدكتور خلال 30 دقيقة من ميعاد آخر.")
-
+                    conflict_info = "\n".join(
+                        f"• عند {UTC.localize(appt.appointment_date).astimezone(tz).strftime('%Y-%m-%d %H:%M')}"
+                        for appt in conflict_appointments
+                    )
+                    raise ValidationError(
+                        f"⚠ لا يمكن حجز ميعاد لنفس الدكتور خلال 30 دقيقة من ميعاد آخر.\nالمواعيد المتعارضة:\n{conflict_info}"
+                    )
 class PatientPharmacyLines(models.Model):
     _name = "patient.pharmacy.lines"
     _description = "Patient Pharmacy Lines"
