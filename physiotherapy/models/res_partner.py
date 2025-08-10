@@ -8,21 +8,25 @@ class Registration(models.Model):
     _inherit = 'res.partner'
     _description = 'Registration'
 
-    is_patient = fields.Boolean(string="Is a Patient")
-    code = fields.Char(default='new', readonly=1, string="Code")
+    is_patient = fields.Boolean(string="مريض")
+    code = fields.Char(default='new', readonly=1, string="الكود")
     birth_date = fields.Date(string="تاريخ الميلاد", required=True)
     age = fields.Integer(string="العمر", compute="_compute_age", store=True)
-    gender = fields.Selection([('m', 'Male'), ('f', 'Female')], string="Gender", required=True)
+    gender = fields.Selection([
+        ('m', 'ذكر'),
+        ('f', 'أنثى')
+    ], string="النوع", required=True)
+
 
     nationality_id = fields.Many2one('res.country', string="الجنسية", required=True)
     state_code = fields.Char(string="كود الدولة")
-    national_address = fields.Text(string="عنوان وطني")
+    national_address = fields.Text(string="العنوان الوطني")
     identity_info = fields.Text(string="رقم الهوية")
 
-    doctor = fields.Many2one('hr.employee', string='الاخصائي')
-    sales_person = fields.Many2one('res.users', string='مندوب المبيعات')
+    doctor = fields.Many2one('hr.employee', string='الأخصائي')
+    sales_person = fields.Many2one('res.users', string='الأخصائي')
 
-    diagnosis = fields.Char(string="Diagnosis", tracking=True)
+    diagnosis = fields.Char(string="التشخيص", tracking=True)
 
     # Past History
     rta = fields.Boolean(string="RTA")

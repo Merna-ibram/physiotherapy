@@ -84,20 +84,20 @@
     </record>
 
     <record id="action_patient_appointment" model="ir.actions.act_window">
-        <field name="name">Patient Appointments</field>
+        <field name="name">حجز المواعيد</field>
         <field name="type">ir.actions.act_window</field>
         <field name="res_model">patient.appointment</field>
         <field name="view_mode">tree,form</field>
     </record>
 
     <menuitem id="menu_patient_appointments"
-        name="Patient Appointments"
+        name=" المواعيد"
         parent="menu_patient_id"
         action="action_patient_appointment"
         sequence="10" />
 
     <menuitem id="menu_patient_appointments"
-        name="Patient Appointments"
+        name=" المواعيد"
         parent="menu_patient_id"
         action="action_patient_appointment"
         groups="group_doctors_appointment_administrator,group_doctors_appointment_doctor"/>

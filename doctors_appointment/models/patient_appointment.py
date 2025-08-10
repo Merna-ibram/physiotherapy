@@ -9,17 +9,20 @@ class PatientAppointment(models.Model):
     _name = "patient.appointment"
     _description = "Patient Records"
 
-    patient_id = fields.Many2one('res.partner', string="Patient")
-    doctors_id = fields.Many2one('hr.employee', string="الاخصائي")
-    appointment_date = fields.Datetime(string="Appointment Date")
+    patient_id = fields.Many2one('res.partner', string="المريض")
+    doctors_id = fields.Many2one('hr.employee', string="الأخصائي")
+    appointment_date = fields.Datetime(string="تاريخ ووقت الموعد")
     appointment_type = fields.Selection([
-        ('checkup', 'Checkup'),
-        ('treatment', 'Treatment'),
-        ('consultation', 'Consultation')], string='Appointment Type')
-    observation = fields.Text(string="Observation")
-    pharmacy_line_ids = fields.One2many('patient.pharmacy.lines', 'appointment_id', string='Pharmacy Lines')
-    patient_prescription_line_ids = fields.One2many('patient.prescription.line','prescription_id',string='Prescription Lines')
-    total_amount = fields.Float(string="Total Amount", compute="_compute_total_amount", store=True)
+        ('checkup', 'فحص'),
+        ('treatment', 'علاج'),
+        ('consultation', 'استشارة')
+    ], string='نوع الموعد')
+
+    observation = fields.Text(string="الملاحظات الطبية")
+    pharmacy_line_ids = fields.One2many('patient.pharmacy.lines', 'appointment_id', string='بنود الصيدلية')
+    patient_prescription_line_ids = fields.One2many('patient.prescription.line', 'prescription_id',
+                                                    string='بنود الروشتة')
+    total_amount = fields.Float(string="إجمالي المبلغ", compute="_compute_total_amount", store=True)
     done = fields.Boolean(string="تم", default=False)
     notes = fields.Text(string="ملاحظات")
     is_reserved = fields.Boolean(string="محجوز؟", default=False)

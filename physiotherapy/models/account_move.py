@@ -11,27 +11,28 @@ from odoo.tools import frozendict
 class AccountMove(models.Model):
     _inherit = 'account.move'
 
-    start_date = fields.Date(string="Subscription Start Date")
-    months = fields.Integer(string="Months of Subscription")
-    end_date = fields.Date(string="Subscription End Date", compute="_compute_end_date", store=True)
-    doctor =  fields.Many2one('hr.employee',  string='الاخصائي', readonly=True)
-    code = fields.Char(related='partner_id.code', readonly=1, string="Code")
-    age = fields.Integer(related='partner_id.age', string="Age")
-    gender = fields.Selection(related='partner_id.gender', string="Gender")
-    national_address = fields.Text(related='partner_id.national_address',string="عنوان وطني")
-    mobile = fields.Char(related='partner_id.mobile', string="Mobile", store=True)
+    start_date = fields.Date(string="تاريخ بداية الاشتراك")
+    months = fields.Integer(string="عدد أشهر الاشتراك")
+    end_date = fields.Date(string="تاريخ انتهاء الاشتراك", compute="_compute_end_date", store=True)
+    doctor = fields.Many2one('hr.employee', string='الأخصائي', readonly=True)
+    code = fields.Char(related='partner_id.code', readonly=1, string="الكود")
+    age = fields.Integer(related='partner_id.age', string="العمر")
+    gender = fields.Selection(related='partner_id.gender', string="النوع")
+    national_address = fields.Text(related='partner_id.national_address', string="العنوان الوطني")
+    mobile = fields.Char(related='partner_id.mobile', string="رقم الموبايل", store=True)
 
-    invoice_created_months = fields.Integer(string="Created Invoices Count", default=0)
+    invoice_created_months = fields.Integer(string="عدد الفواتير المنشأة", default=0)
     agents_name_invoice = fields.Many2many(
         'res.partner',
-        string='Agent',readonly=1
+        string='الوكيل',
+        readonly=1
     )
     agents_name = fields.One2many(
         'res.partner',
         compute='_compute_agents_from_invoice_partner_move',
-        string='Agent',
-
+        string='الوكيل',
     )
+
     # doctor_user_id = fields.Many2one('res.users', compute='_compute_doctor_user_id', store=True)
     #
     # @api.depends('partner_id.doctor.user_id')

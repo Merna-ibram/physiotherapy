@@ -5,7 +5,7 @@ class MyCases(models.Model):
     _name = 'my.cases'
     _description = 'My Medical Cases'
 
-    patient_id = fields.Many2one('res.partner', string='Patient')
+    patient_id = fields.Many2one('res.partner', string='المريض')
     doctor = fields.Many2one('hr.employee', string='الاخصائي')
 
     @api.onchange('patient_id')
