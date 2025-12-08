@@ -10,15 +10,17 @@ class Registration(models.Model):
 
     is_patient = fields.Boolean(string="مريض")
     code = fields.Char(default='new', readonly=1, string="الكود")
-    birth_date = fields.Date(string="تاريخ الميلاد", required=True)
+    birth_date = fields.Date(string="تاريخ الميلاد")
     age = fields.Integer(string="العمر", compute="_compute_age", store=True)
     gender = fields.Selection([
-        ('m', 'ذكر'),
-        ('f', 'أنثى')
-    ], string="النوع", required=True)
+        ('m', 'Male'),
+        ('f', 'Female'),
+        ('unknown', 'Unknown'),
+    ], string="النوع")
 
+    tax_number = fields.Char(string="الرقم الضريبي")
 
-    nationality_id = fields.Many2one('res.country', string="الجنسية", required=True)
+    nationality_id = fields.Many2one('res.country', string="الجنسية")
     state_code = fields.Char(string="كود الدولة")
     national_address = fields.Text(string="العنوان الوطني")
     identity_info = fields.Text(string="رقم الهوية")
@@ -115,12 +117,12 @@ class Registration(models.Model):
         for rec in self:
             rec.show_appointment_button = rec.is_patient
 
-    @api.constrains('is_patient', 'doctor')
-    def _check_required_fields_for_patient(self):
-        for rec in self:
-            if rec.is_patient:
-                if not rec.doctor:
-                    raise ValidationError("يجب تحديد الأخصائي للمريض.")
+    # @api.constrains('is_patient', 'doctor')
+    # def _check_required_fields_for_patient(self):
+    #     for rec in self:
+    #         if rec.is_patient:
+    #             if not rec.doctor:
+    #                 raise ValidationError("يجب تحديد الأخصائي للمريض.")
 
     def _is_reception_staff(self):
         return self.env.user.has_group('physiotherapy.group_contact_recption')
@@ -303,6 +305,20 @@ class CountryInherit(models.Model):
             name = f"{record.name} [{record.state_code}]" if record.state_code else record.name
             result.append((record.id, name))
         return result
+
+    @api.model
+    def create_unknown_country(self):
+        """Create 'Unknown' country if not exists."""
+        if not self.search([('code', '=', 'UNKN')], limit=1):
+            self.create({
+                'name': 'Unknown',
+                'code': 'UNKN',
+                'state_code': '000'
+            })
+
+    def init(self):
+        """Run automatically when module is installed/updated."""
+        self.create_unknown_country()
 
     @api.model
     def create(self, vals):

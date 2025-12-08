@@ -35,6 +35,7 @@
                    <group col="2" colspan="4">
                        <field name="nationality_id" placeholder="مثال: Egypt"/>
                        <field name="state_code" placeholder="مثال: 165"/>
+                       <field name="tax_number"/>
                    </group>
                     <group col="4" colspan="4" >
                         <field name="identity_info" placeholder="مثال: رقم القومي (في مصر) أو رقم الهوية (في السعودية)"/>
@@ -78,7 +79,7 @@
                             <field name="duration"/>
                         </group>
 
-                        <separator string="Chief Complain"/>
+                        <separator string="Chief Complain and present history"/>
                         <group col="4" colspan="4">
                             <field name="pain"/>
                             <field name="stiffness"/>

@@ -1,5 +1,8 @@
 from collections import defaultdict
 
+import qrcode
+import base64
+from io import BytesIO
 from odoo import models, fields, api
 from datetime import date
 from dateutil.relativedelta import relativedelta
@@ -13,7 +16,7 @@ class AccountMove(models.Model):
 
     start_date = fields.Date(string="تاريخ بداية الاشتراك")
     months = fields.Integer(string="عدد أشهر الاشتراك")
-    end_date = fields.Date(string="تاريخ انتهاء الاشتراك", compute="_compute_end_date", store=True)
+    # end_date = fields.Date(string="تاريخ انتهاء الاشتراك", compute="_compute_end_date", store=True)
     doctor = fields.Many2one('hr.employee', string='الأخصائي', readonly=True)
     code = fields.Char(related='partner_id.code', readonly=1, string="الكود")
     age = fields.Integer(related='partner_id.age', string="العمر")
@@ -32,6 +35,44 @@ class AccountMove(models.Model):
         compute='_compute_agents_from_invoice_partner_move',
         string='الوكيل',
     )
+
+    cash_amount = fields.Monetary(string='Cash Amount', currency_field='currency_id',
+                                  compute='_compute_payment_amounts')
+    pos_amount = fields.Monetary(string='POS Amount', currency_field='currency_id', compute='_compute_payment_amounts')
+    card_amount = fields.Monetary(string='Card Amount', currency_field='currency_id',
+                                  compute='_compute_payment_amounts')
+
+    qr_code = fields.Binary("QR Code", compute="_compute_qr_code")
+
+    def _compute_qr_code(self):
+        for rec in self:
+            data = f"Invoice: {rec.name}\nCustomer: {rec.partner_id.name}\nTotal: {rec.amount_total}"
+            qr = qrcode.make(data)
+            buffer = BytesIO()
+            qr.save(buffer, format="PNG")
+            rec.qr_code = base64.b64encode(buffer.getvalue())
+
+    @api.depends('payment_ids')
+    def _compute_payment_amounts(self):
+        for move in self:
+            cash = 0.0
+            pos = 0.0
+            card = 0.0
+            for payment in move.payment_ids:
+                journal_type = payment.journal_id.type
+                if journal_type == 'cash':
+                    cash += payment.amount
+                elif journal_type == 'bank' and payment.journal_id.pos_cash:
+                    pos += payment.amount
+                elif journal_type == 'card':
+                    card += payment.amount
+            move.cash_amount = cash
+            move.pos_amount = pos
+            move.card_amount = card
+
+
+
+
 
     # doctor_user_id = fields.Many2one('res.users', compute='_compute_doctor_user_id', store=True)
     #
@@ -222,19 +263,35 @@ class AccountMove(models.Model):
 class AccountMoveLine(models.Model):
     _inherit = 'account.move.line'
 
+    # @api.model
+    # def create(self, vals):
+    #     move = self.env['account.move'].browse(vals.get('move_id'))
+    #     partner = move.partner_id
+    #     # لو المريض له عنوان وطني، نشيل الضرائب
+    #     if partner and partner.national_address:
+    #         vals['tax_ids'] = [(5, 0, 0)]
+    #     return super().create(vals)
+    #
+    # def write(self, vals):
+    #     for line in self:
+    #         partner = line.move_id.partner_id
+    #         if partner and partner.national_address:
+    #             vals['tax_ids'] = [(5, 0, 0)]
+    #     return super().write(vals)
+
     @api.model
     def create(self, vals):
         move = self.env['account.move'].browse(vals.get('move_id'))
         partner = move.partner_id
-        # لو المريض له عنوان وطني، نشيل الضرائب
-        if partner and partner.national_address:
+        # لو المريض له عنوان وطني ومحدد كمريض، نحذف الضرائب
+        if partner and partner.is_patient and partner.national_address:
             vals['tax_ids'] = [(5, 0, 0)]
         return super().create(vals)
 
     def write(self, vals):
         for line in self:
             partner = line.move_id.partner_id
-            if partner and partner.national_address:
+            if partner and partner.is_patient and partner.national_address:
                 vals['tax_ids'] = [(5, 0, 0)]
         return super().write(vals)
 
@@ -291,7 +348,7 @@ class AccountMoveLine(models.Model):
                     'move_id': line.move_id.id,
                     'display_type': line.display_type,
                 }): {
-                    'name': tax['name'] + (' ' + _('(Discount)') if line.display_type == 'epd' else ''),
+                    'name': tax['name'] + (' ' + ('(Discount)') if line.display_type == 'epd' else ''),
                     'balance': tax['amount'] / rate,
                     'amount_currency': tax['amount'],
                     'tax_base_amount': tax['base'] / rate * (-1 if line.tax_tag_invert else 1),
@@ -304,6 +361,9 @@ class AccountMoveLine(models.Model):
                 line.compute_all_tax[frozendict({'id': line.id})] = {
                     'tax_tag_ids': [(6, 0, compute_all_currency['base_tags'])],
                 }
+
+
+
 
 
 
